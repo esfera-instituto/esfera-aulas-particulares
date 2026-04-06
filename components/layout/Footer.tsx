@@ -16,6 +16,9 @@ export const Footer = () => (
           <li><Link href="/ensino-fundamental">Ensino Fundamental</Link></li>
           <li><Link href="/ensino-medio">Ensino Médio</Link></li>
           <li><Link href="/ensino-superior">Ensino Superior</Link></li>
+          <li><Link href="/psicopedagogia">Psicopedagogia</Link></li>
+          <li><Link href="/equipe-docente">Equipe docente</Link></li>
+          <li><Link href="/quem-somos">Quem somos</Link></li>
           <li><Link href="/contato">Contato</Link></li>
         </ul>
       </div>

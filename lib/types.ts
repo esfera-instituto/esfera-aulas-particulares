@@ -6,6 +6,7 @@ export interface NivelEnsino {
   slug: NivelEnsinoSlug;
   nome: string;
   descricao: string;
+  imagem: string;
 }
 
 export interface Disciplina {

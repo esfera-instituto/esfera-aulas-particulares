@@ -49,12 +49,38 @@ const whatsappUrl =
       </section>
 
       <Section title="Níveis de ensino">
-        <Grid>
-          {niveisEnsino.map((nivel) => (
-            <Card key={nivel.slug} title={nivel.nome} description={nivel.descricao} href={`/${nivel.slug}`} actionLabel="Ver disciplinas" />
-          ))}
-        </Grid>
-      </Section>
+  <Grid>
+    {niveisEnsino.map((nivel) => (
+      <article
+        key={nivel.slug}
+        className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+      >
+        <img
+          src={nivel.imagem}
+          alt={nivel.nome}
+          className="h-44 w-full object-cover"
+        />
+
+        <div className="p-5">
+          <h3 className="text-lg font-semibold text-marinho">
+            {nivel.nome}
+          </h3>
+
+          <p className="mt-3 text-sm leading-6 text-slate-600">
+            {nivel.descricao}
+          </p>
+
+          <Link
+            href={`/${nivel.slug}`}
+            className="mt-4 inline-block text-sm font-medium text-marinho"
+          >
+            Saiba mais
+          </Link>
+        </div>
+      </article>
+    ))}
+  </Grid>
+</Section>
 
       <Section title="Como funciona o atendimento" className="bg-white">
   <Grid>
@@ -100,19 +126,43 @@ const whatsappUrl =
       </Section>
 
       <Section title="Psicopedagogia" className="bg-white">
-        <div className="rounded-xl border border-slate-200 bg-white p-6">
-          <p className="text-slate-700">
-            O ESFERA também oferece suporte psicopedagógico para apoiar processos de aprendizagem e rotina de estudos do aluno ou da aluna.
-          </p>
-          <Link href="/psicopedagogia" className="mt-4 inline-flex rounded-lg bg-marinho px-4 py-2 text-sm font-medium text-white">
-            Conhecer psicopedagogia
-          </Link>
-        </div>
-      </Section>
+  <div className="grid gap-8 lg:grid-cols-2 items-stretch">
+    
+    {/* Imagem */}
+    <div className="h-full overflow-hidden rounded-2xl border border-slate-200">
+      <img
+        src="/psicopedagogia/psico.jpg"
+        alt="Atendimento psicopedagógico individualizado"
+        className="h-full w-full object-cover"
+      />
+    </div>
 
-      <Section title="Professores(as)">
+    {/* Conteúdo */}
+    <div className="h-full rounded-2xl border border-slate-200 bg-white p-8 shadow-sm flex flex-col justify-between">
+      <p className="text-slate-700 leading-7">
+        O ESFERA oferece acompanhamento psicopedagógico para estudantes que enfrentam dificuldades de aprendizagem, organização da rotina de estudos ou adaptação acadêmica. Esse suporte contribui para o desenvolvimento de estratégias mais adequadas de estudo, maior autonomia e melhor aproveitamento escolar.
+      </p>
+
+      <ul className="mt-5 space-y-2 text-sm text-slate-600">
+        <li>• Organização da rotina de estudos</li>
+        <li>• Estratégias de aprendizagem</li>
+        <li>• Acompanhamento individualizado</li>
+      </ul>
+
+      <Link
+        href="/psicopedagogia"
+        className="mt-6 inline-flex rounded-lg bg-marinho px-4 py-2 text-sm font-medium text-white"
+      >
+        Conhecer psicopedagogia
+      </Link>
+    </div>
+
+  </div>
+</Section>
+
+      <Section title="Equipe docente">
   <Grid>
-    {professores.map((professor) => (
+    {professores.slice(0,3).map((professor) => (
       <article
         key={professor.id}
         className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
@@ -151,8 +201,37 @@ const whatsappUrl =
       <Section title="Materiais de apoio gratuitos" className="bg-white">
         <Grid>
           {materiaisDestaque.map((material) => (
-            <Card key={material.id} title={material.titulo} meta={material.tipo === "resumo" ? "Resumo teórico" : "Lista de exercícios"} href={material.pdfUrl} actionLabel="Abrir PDF" />
-          ))}
+  <article
+    key={material.id}
+    className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition"
+  >
+    <img
+      src={`/materiais/${material.id}.jpg`}
+      alt={material.titulo}
+      className="h-40 w-full object-cover"
+    />
+
+    <div className="p-5">
+      <h3 className="text-lg font-semibold text-marinho">
+        {material.titulo}
+      </h3>
+
+      <p className="mt-1 text-sm text-slate-500">
+        {material.tipo === "resumo"
+          ? "Resumo teórico"
+          : "Lista de exercícios"}
+      </p>
+
+      <a
+        href={material.pdfUrl}
+        target="_blank"
+        className="mt-4 inline-block text-sm font-medium text-marinho hover:underline"
+      >
+        Abrir PDF
+      </a>
+    </div>
+  </article>
+))}
         </Grid>
         <p className="mt-6 text-sm text-slate-600">
           Os materiais estão disponíveis nas páginas de cada disciplina.

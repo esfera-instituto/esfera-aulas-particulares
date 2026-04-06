@@ -17,10 +17,40 @@ export const ContactForm = ({ initialNivel = "", initialDisciplina = "", origemP
     [initialDisciplina, origemPagina]
   );
 
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setMensagem("Solicitação registrada em modo de demonstração. Em breve, este formulário será integrado ao backend.");
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
+
+  const form = event.currentTarget;
+  const formData = new FormData(form);
+
+  const data = {
+    nome: formData.get("nome"),
+    whatsapp: formData.get("whatsapp"),
+    nivel: formData.get("nivel"),
+    instituicao: formData.get("instituicao"),
+    disciplina: formData.get("disciplina"),
+    origem: formData.get("origemPagina"),
   };
+
+  try {
+    const response = await fetch("/api/contato", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+      setMensagem("Solicitação enviada com sucesso. Em breve entraremos em contato.");
+      form.reset();
+    } else {
+      setMensagem("Erro ao enviar. Tente novamente.");
+    }
+  } catch (error) {
+    setMensagem("Erro de conexão. Tente novamente.");
+  }
+};
 
   return (
     <form onSubmit={onSubmit} className="space-y-4 rounded-xl border border-slate-200 bg-white p-6">

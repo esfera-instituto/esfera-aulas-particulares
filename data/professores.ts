@@ -15,20 +15,20 @@ export const professores: Professor[] = [
     area: "Física",
     imagem: "/professores/nicolas.jpg",
     descricao:
-      "Doutorando em Física pela Universidade Estadual Paulista (UNESP), possui mais de 5 anos de experiência em aulas particulares. Atua com aulas para ensino fundamental, ensino médio, preparação para vestibulares e também para o ensino superior."
+      "Doutorando em Física pela Universidade Estadual Paulista (UNESP), possui vários anos de experiência no ensino de Matemática e Física. Atua com aulas para ensino fundamental, ensino médio, preparação para vestibulares e também para o ensino superior."
   },
   {
     id: "p3",
+    nome: "Profa. Isa",
+    area: "Língua Portuguesa", // ajuste se quiser
+    imagem: "/professores/isa.jpg",
+    descricao: "Atua como professora de Língua Portuguesa (Gramática, Interpretação de etxtos, Literatura e Redação) há mais de 15 anos. É graduada em Letras pela Universidade de São Paulo (USP), com habilitação em Português e Alemão (Bacharelado e Licenciatura). Tem experiência com Ensino Fundamental II, Ensino Médio e Cursos preparatórios voltados a vestibulares e concursos. Também atua como revisora e mentora de escrita acadêmica para o Ensino Superior."
+  },
+  {
+    id: "p4",
     nome: "Profa. Aline",
     area: "Física", // ajuste se quiser
     imagem: "/professores/aline.jpg",
     descricao: "Graduanda em física pela Universidade de São paulo (USP), possui vários anos de experiência no ensino de Matemática e Física. Atua com aulas para ensino fundamental e médio, incluindo prepação para vestibulares."
   },
-  {
-    id: "p4",
-    nome: "Profa. Isa",
-    area: "Redação", // ajuste se quiser
-    imagem: "/professores/isa.jpg",
-    descricao: "Atua no ensino de Química com abordagem estruturada, auxiliando alunos na organização dos estudos e compreensão dos conteúdos."
-  }
 ];
