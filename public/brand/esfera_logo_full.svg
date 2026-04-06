@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 900 900" role="img" aria-label="Logo ESFERA com slogan">
+  <defs>
+    <radialGradient id="sphere" cx="38%" cy="30%" r="62%">
+      <stop offset="0%" stop-color="#b7d2de"/>
+      <stop offset="22%" stop-color="#6b94ab"/>
+      <stop offset="55%" stop-color="#1b5b7a"/>
+      <stop offset="100%" stop-color="#08243D"/>
+    </radialGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#08243D" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <rect width="100%" height="100%" fill="transparent"/>
+  <circle cx="450" cy="260" r="175" fill="url(#sphere)" filter="url(#softShadow)"/>
+
+  <text x="450" y="540" text-anchor="middle"
+        font-family="Montserrat, Arial, Helvetica, sans-serif"
+        font-size="110" font-weight="700" letter-spacing="4"
+        fill="#0A3D5A">ESFERA</text>
+
+  <text x="450" y="640" text-anchor="middle"
+        font-family="Inter, Arial, Helvetica, sans-serif"
+        font-size="34" font-weight="500" letter-spacing="2.5"
+        fill="#6B7280">ONDE O CONHECIMENTO ENCONTRA O SUCESSO</text>
+</svg>

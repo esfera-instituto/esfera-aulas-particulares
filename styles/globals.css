@@ -1,0 +1,28 @@
+:root {
+  --esfera-primary: #0A3D5A;
+  --esfera-primary-dark: #08243D;
+  --esfera-secondary: #1F6A94;
+  --esfera-light: #DCEAF3;
+
+  --esfera-gray-100: #F4F6F8;
+  --esfera-gray-200: #E6EAEE;
+  --esfera-gray-700: #253444;
+
+  --esfera-white: #FFFFFF;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-slate-50 text-slate-800 antialiased;
+}
+
+a {
+  @apply transition-colors;
+}
