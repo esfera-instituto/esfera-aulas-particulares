@@ -1,14 +1,14 @@
 :root {
-  --esfera-primary: #0A3D5A;
-  --esfera-primary-dark: #08243D;
-  --esfera-secondary: #1F6A94;
-  --esfera-light: #DCEAF3;
+  --esfera-primary: #0a3d5a;
+  --esfera-primary-dark: #08243d;
+  --esfera-secondary: #1f6a94;
+  --esfera-light: #dceaf3;
 
-  --esfera-gray-100: #F4F6F8;
-  --esfera-gray-200: #E6EAEE;
+  --esfera-gray-100: #f4f6f8;
+  --esfera-gray-200: #e6eaee;
   --esfera-gray-700: #253444;
 
-  --esfera-white: #FFFFFF;
+  --esfera-white: #ffffff;
 }
 
 @tailwind base;

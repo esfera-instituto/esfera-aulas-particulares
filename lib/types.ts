@@ -1,4 +1,7 @@
-export type NivelEnsinoSlug = "ensino-fundamental" | "ensino-medio" | "ensino-superior";
+export type NivelEnsinoSlug =
+  | "ensino-fundamental"
+  | "ensino-medio"
+  | "ensino-superior";
 
 export type MaterialTipo = "resumo" | "lista";
 

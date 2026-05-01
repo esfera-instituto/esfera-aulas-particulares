@@ -3,19 +3,24 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Grid } from "@/components/ui/Grid";
 import { Section } from "@/components/ui/Section";
+import { DisciplinaCard } from "@/components/ui/DisciplinaCard";
 import { getDisciplinasByNivel } from "@/data/disciplinas";
 import { getMateriaisDestaque } from "@/data/materiais";
 import { NivelEnsino } from "@/lib/types";
 
 export const LevelPageTemplate = ({ nivel }: { nivel: NivelEnsino }) => {
   const disciplinas = getDisciplinasByNivel(nivel.slug);
-  const materiais = getMateriaisDestaque(3).filter((m) => m.nivel === nivel.slug);
+  const materiais = getMateriaisDestaque(3).filter(
+    (m) => m.nivel === nivel.slug,
+  );
 
   return (
     <>
       <section className="bg-white py-16">
         <Container>
-          <h1 className="text-3xl font-semibold text-marinho sm:text-4xl">{nivel.nome}</h1>
+          <h1 className="text-3xl font-semibold text-marinho sm:text-4xl">
+            {nivel.nome}
+          </h1>
           <p className="mt-4 max-w-3xl text-slate-600">{nivel.descricao}</p>
         </Container>
       </section>
@@ -23,12 +28,10 @@ export const LevelPageTemplate = ({ nivel }: { nivel: NivelEnsino }) => {
       <Section title="Disciplinas disponíveis">
         <Grid>
           {disciplinas.map((disciplina) => (
-            <Card
+            <DisciplinaCard
               key={disciplina.id}
-              title={disciplina.nome}
-              description={disciplina.descricao}
-              href={`/${nivel.slug}/${disciplina.slug}`}
-              actionLabel="Ver disciplina"
+              disciplina={disciplina}
+              nivelSlug={nivel.slug}
             />
           ))}
         </Grid>
@@ -40,8 +43,13 @@ export const LevelPageTemplate = ({ nivel }: { nivel: NivelEnsino }) => {
             <Card
               key={material.id}
               title={material.titulo}
-              meta={material.tipo === "resumo" ? "Resumo teórico" : "Lista de exercícios"}
+              meta={
+                material.tipo === "resumo"
+                  ? "Resumo teórico"
+                  : "Lista de exercícios"
+              }
               href={material.pdfUrl}
+              image={material.capaUrl}
               actionLabel="Abrir PDF"
             />
           ))}
