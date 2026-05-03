@@ -44,6 +44,7 @@ const aprovacoes = [
   "Engenharia — Poli USP",
   "Engenharia — ITA",
   "Direito — USP Largo São Francisco",
+  "...",
 ];
 
 const formacoes = [
