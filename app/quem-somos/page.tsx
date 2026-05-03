@@ -68,8 +68,8 @@ export default function QuemSomosPage() {
             </h1>
             <p className="mt-4 text-lg leading-relaxed text-slate-600">
               O ESFERA Aulas Particulares nasceu de uma trajetória de mais de
-              vinte anos dedicados ao ensino — do plantão de dúvidas na
-              graduação às salas de grandes cursinhos do estado de São Paulo.
+              vinte anos dedicados ao ensino. Do plantão de dúvidas na graduação
+              às salas de grandes cursinhos do estado de São Paulo.
             </p>
           </div>
         </Container>
