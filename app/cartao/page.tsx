@@ -40,8 +40,8 @@ const links = [
     cor: "bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 hover:opacity-90 text-white",
   },
   {
-    href: "https://youtube.com/@ESFERAAULASPARTICULARES",
-    label: "@ESFERAAULASPARTICULARES",
+    href: "https://youtube.com/@esferaaulasparticulares",
+    label: "@esferaaulasparticulares",
     sublabel: "YouTube",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
