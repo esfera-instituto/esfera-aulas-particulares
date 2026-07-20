@@ -156,8 +156,8 @@ export default function ValoresPage() {
           </p>
           <p className="text-sm text-white/70 leading-relaxed">
             PIX, boleto, cartão de débito ou cartão de crédito. Para valores a
-            partir de de R$ 1.500,00 no cartão de crédito, parcelamento em até
-            3x sem juros.
+            partir de R$ 1.500,00 no cartão de crédito, parcelamento em até 3x
+            sem juros.
           </p>
           <p className="text-sm text-white/70 leading-relaxed">
             Para aulas em domicílio, quando a cobrança for realizada, será por
