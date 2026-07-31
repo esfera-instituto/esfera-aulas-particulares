@@ -13,8 +13,19 @@ type ProximaAula = {
   disciplina: string | null;
   local: string | null;
   status: string;
-  professores?: { nome: string };
+  professores?: { nome: string; telefone: string | null };
 };
+
+function formatarTelefone(tel: string) {
+  const digitos = tel.replace(/\D/g, "");
+  if (digitos.length === 11) {
+    return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 3)} ${digitos.slice(3, 7)}-${digitos.slice(7)}`;
+  }
+  if (digitos.length === 10) {
+    return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 6)}-${digitos.slice(6)}`;
+  }
+  return tel;
+}
 
 type RelatorioFamilia = {
   id: string;
@@ -120,7 +131,9 @@ export default function SalaDoAlunoPage() {
     // Próxima aula (como aluno principal)
     const { data: aulaPrincipal } = await supabase
       .from("aulas")
-      .select("id, data_hora, disciplina, local, status, professores(nome)")
+      .select(
+        "id, data_hora, disciplina, local, status, professores(nome, telefone)",
+      )
       .eq("aluno_id", alunoId)
       .in("status", ["solicitada", "agendada", "confirmada"])
       .gte("data_hora", agora)
@@ -312,12 +325,20 @@ export default function SalaDoAlunoPage() {
         <span className="text-sm font-medium tracking-wide">
           SALA DO(A) ALUNO(A)
         </span>
-        <button
-          onClick={sair}
-          className="text-white/60 hover:text-white text-xs"
-        >
-          Sair
-        </button>
+        <div className="flex items-center gap-4">
+          
+            href="/sala-do-aluno/minha-conta"
+            className="text-white/60 hover:text-white text-xs"
+          >
+            minha conta
+          </a>
+          <button
+            onClick={sair}
+            className="text-white/60 hover:text-white text-xs"
+          >
+            Sair
+          </button>
+        </div>
       </header>
 
       <main className="max-w-2xl mx-auto px-6 py-8">
@@ -366,6 +387,17 @@ export default function SalaDoAlunoPage() {
                     {LABEL_STATUS_AULA[proximaAula.status] ||
                       proximaAula.status}
                   </p>
+                  {proximaAula.professores?.telefone && (
+                    <a
+                      href={`https://wa.me/55${proximaAula.professores.telefone.replace(/\D/g, "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block text-sm text-green-700 font-medium hover:underline mt-3"
+                    >
+                      📞 {formatarTelefone(proximaAula.professores.telefone)}{" "}
+                      (WhatsApp do professor)
+                    </a>
+                  )}
                 </div>
               ) : (
                 <p className="text-sm text-gray-400">
