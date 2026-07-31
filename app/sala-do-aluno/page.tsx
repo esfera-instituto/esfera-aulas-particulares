@@ -16,17 +16,6 @@ type ProximaAula = {
   professores?: { nome: string; telefone: string | null };
 };
 
-function formatarTelefone(tel: string) {
-  const digitos = tel.replace(/\D/g, "");
-  if (digitos.length === 11) {
-    return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 3)} ${digitos.slice(3, 7)}-${digitos.slice(7)}`;
-  }
-  if (digitos.length === 10) {
-    return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 6)}-${digitos.slice(6)}`;
-  }
-  return tel;
-}
-
 type RelatorioFamilia = {
   id: string;
   tema_aula: string | null;
@@ -47,6 +36,7 @@ type Cobranca = {
 function formatarData(iso: string) {
   return new Date(iso).toLocaleDateString("pt-BR");
 }
+
 function formatarDataHora(iso: string) {
   return new Date(iso).toLocaleString("pt-BR", {
     day: "2-digit",
@@ -55,8 +45,20 @@ function formatarDataHora(iso: string) {
     minute: "2-digit",
   });
 }
+
 function formatarMoeda(v: number) {
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+function formatarTelefone(tel: string) {
+  const digitos = tel.replace(/\D/g, "");
+  if (digitos.length === 11) {
+    return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 3)} ${digitos.slice(3, 7)}-${digitos.slice(7)}`;
+  }
+  if (digitos.length === 10) {
+    return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 6)}-${digitos.slice(6)}`;
+  }
+  return tel;
 }
 
 const LABEL_LOCAL: Record<string, string> = {
@@ -128,7 +130,6 @@ export default function SalaDoAlunoPage() {
 
     const agora = new Date().toISOString();
 
-    // Próxima aula (como aluno principal)
     const { data: aulaPrincipal } = await supabase
       .from("aulas")
       .select(
@@ -141,7 +142,6 @@ export default function SalaDoAlunoPage() {
       .limit(1)
       .maybeSingle();
 
-    // Próxima aula (como participante de grupo)
     const { data: participacoes } = await supabase
       .from("aula_alunos")
       .select("aula_id")
@@ -152,7 +152,9 @@ export default function SalaDoAlunoPage() {
     if (idsGrupo.length > 0) {
       const { data } = await supabase
         .from("aulas")
-        .select("id, data_hora, disciplina, local, status, professores(nome)")
+        .select(
+          "id, data_hora, disciplina, local, status, professores(nome, telefone)",
+        )
         .in("id", idsGrupo)
         .in("status", ["solicitada", "agendada", "confirmada"])
         .gte("data_hora", agora)
@@ -171,7 +173,6 @@ export default function SalaDoAlunoPage() {
     );
     setProximaAula(candidatas[0] || null);
 
-    // Último relatório pedagógico (resumo família)
     const { data: rel } = await supabase
       .from("relatorios_pedagogicos")
       .select(
@@ -183,7 +184,6 @@ export default function SalaDoAlunoPage() {
       .maybeSingle();
     setRelatorio((rel as unknown as RelatorioFamilia) || null);
 
-    // Financeiro
     const { data: cobs } = await supabase
       .from("cobrancas")
       .select("id, data_inicio, data_fim, valor_total, status, criado_em")
@@ -326,7 +326,7 @@ export default function SalaDoAlunoPage() {
           SALA DO(A) ALUNO(A)
         </span>
         <div className="flex items-center gap-4">
-          
+          <a
             href="/sala-do-aluno/minha-conta"
             className="text-white/60 hover:text-white text-xs"
           >
