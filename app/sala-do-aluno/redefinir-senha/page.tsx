@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabase";
 export default function RedefinirSenhaAlunoPage() {
   const [novaSenha, setNovaSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
+  const [mostrarSenha, setMostrarSenha] = useState(false);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
   const [sucesso, setSucesso] = useState(false);
@@ -53,20 +54,38 @@ export default function RedefinirSenhaAlunoPage() {
             </p>
           ) : (
             <div className="flex flex-col gap-3">
-              <input
-                type="password"
-                value={novaSenha}
-                onChange={(e) => setNovaSenha(e.target.value)}
-                placeholder="Nova senha"
-                className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-3 text-white text-sm placeholder-white/30 focus:outline-none focus:border-white/50"
-              />
-              <input
-                type="password"
-                value={confirmarSenha}
-                onChange={(e) => setConfirmarSenha(e.target.value)}
-                placeholder="Confirmar nova senha"
-                className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-3 text-white text-sm placeholder-white/30 focus:outline-none focus:border-white/50"
-              />
+              <div className="relative">
+                <input
+                  type={mostrarSenha ? "text" : "password"}
+                  value={novaSenha}
+                  onChange={(e) => setNovaSenha(e.target.value)}
+                  placeholder="Nova senha"
+                  className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-3 pr-11 text-white text-sm placeholder-white/30 focus:outline-none focus:border-white/50"
+                />
+                <button
+                  type="button"
+                  onClick={() => setMostrarSenha((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 text-xs"
+                >
+                  {mostrarSenha ? "ocultar" : "ver"}
+                </button>
+              </div>
+              <div className="relative">
+                <input
+                  type={mostrarSenha ? "text" : "password"}
+                  value={confirmarSenha}
+                  onChange={(e) => setConfirmarSenha(e.target.value)}
+                  placeholder="Confirmar nova senha"
+                  className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-3 pr-11 text-white text-sm placeholder-white/30 focus:outline-none focus:border-white/50"
+                />
+                <button
+                  type="button"
+                  onClick={() => setMostrarSenha((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 text-xs"
+                >
+                  {mostrarSenha ? "ocultar" : "ver"}
+                </button>
+              </div>
               {erro && <p className="text-red-400 text-xs">{erro}</p>}
               <button
                 onClick={redefinir}

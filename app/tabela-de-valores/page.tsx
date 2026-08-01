@@ -14,10 +14,20 @@ export const metadata: Metadata = {
 };
 
 const niveis = [
-  { label: "Ensino Fundamental I", valor: 150 },
-  { label: "Ensino Fundamental II", valor: 160 },
-  { label: "Ensino Médio", valor: 170 },
-  { label: "Ensino Superior", valor: 200 },
+  {
+    label: "Ensino Fundamental I",
+    online: 150,
+    espacoEsfera: 170,
+    domicilio: 200,
+  },
+  {
+    label: "Ensino Fundamental II",
+    online: 160,
+    espacoEsfera: 180,
+    domicilio: 210,
+  },
+  { label: "Ensino Médio", online: 170, espacoEsfera: 200, domicilio: 220 },
+  { label: "Ensino Superior", online: 200, espacoEsfera: 220, domicilio: 250 },
 ];
 
 const descontosGrupo = [
@@ -87,13 +97,32 @@ export default function ValoresPage() {
           {niveis.map((n) => (
             <div
               key={n.label}
-              className="flex items-center justify-between rounded-2xl px-5 py-4 bg-white/10 border border-white/10"
+              className="rounded-2xl px-5 py-4 bg-white/10 border border-white/10"
             >
-              <span className="text-sm font-medium text-white">{n.label}</span>
-              <span className="text-sm font-semibold text-white">
-                {formatarMoeda(n.valor)}
-                <span className="text-white/50 font-normal">/hora</span>
-              </span>
+              <p className="text-sm font-medium text-white mb-3">{n.label}</p>
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white/60">On-line</span>
+                  <span className="text-white font-medium">
+                    {formatarMoeda(n.online)}
+                    <span className="text-white/40 font-normal">/hora</span>
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white/60">Espaço ESFERA</span>
+                  <span className="text-white font-medium">
+                    {formatarMoeda(n.espacoEsfera)}
+                    <span className="text-white/40 font-normal">/hora</span>
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white/60">Domicílio</span>
+                  <span className="text-white font-medium">
+                    {formatarMoeda(n.domicilio)}
+                    <span className="text-white/40 font-normal">/hora</span>
+                  </span>
+                </div>
+              </div>
             </div>
           ))}
         </div>
