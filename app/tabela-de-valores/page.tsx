@@ -298,7 +298,7 @@ export default function ValoresPage() {
 
           <p className="text-xs text-white/40 leading-relaxed mt-3">
             Todos os pagamentos são feitos diretamente ao ESFERA — nunca ao
-            professor.
+            professor ou à professora.
           </p>
         </div>
 
