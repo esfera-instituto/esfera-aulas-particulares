@@ -36,6 +36,24 @@ const descontosGrupo = [
   { qtd: "4 ou mais alunos", desconto: "15%" },
 ];
 
+const pacotes = [
+  {
+    horas: 6,
+    desconto: 3,
+    validade: 45,
+  },
+  {
+    horas: 10,
+    desconto: 5,
+    validade: 60,
+  },
+  {
+    horas: 20,
+    desconto: 8,
+    validade: 90,
+  },
+];
+
 function formatarMoeda(valor: number) {
   return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
@@ -145,23 +163,99 @@ export default function ValoresPage() {
           </div>
         </div>
 
-        {/* Política de desconto */}
+        {/* Formas de contratação */}
         <div className="rounded-2xl px-5 py-4 bg-white/5 border border-white/10 mb-4">
-          <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-3">
-            Política de desconto
+          <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-4">
+            Formas de contratação
           </p>
-          <div className="flex flex-col gap-2 text-sm">
-            <div className="flex items-center justify-between">
-              <span className="text-white/70">
-                Acompanhamento (aulas regulares no período letivo)
-              </span>
-              <span className="text-white font-medium">-5%</span>
+
+          <div className="flex flex-col gap-5">
+            <div>
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-sm font-medium text-white">Aula pontual</p>
+                <span className="shrink-0 text-xs font-medium text-white/50">
+                  sem desconto
+                </span>
+              </div>
+
+              <p className="mt-1 text-xs text-white/50 leading-relaxed">
+                Para necessidades ocasionais, sem frequência ou horário fixo.
+              </p>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-white/70">Aulas pontuais</span>
-              <span className="text-white/50 font-medium">sem desconto</span>
+
+            <div className="border-t border-white/10 pt-4">
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-sm font-medium text-white">
+                  Acompanhamento regular
+                </p>
+                <span className="shrink-0 text-sm font-medium text-white">
+                  -5%
+                </span>
+              </div>
+
+              <p className="mt-1 text-xs text-white/50 leading-relaxed">
+                Aulas recorrentes, com frequência mínima de 2 horas por semana,
+                horário reservado e contratação inicial por pelo menos dois
+                meses.
+              </p>
             </div>
           </div>
+        </div>
+
+        {/* Pacotes de horas */}
+        <div className="rounded-2xl px-5 py-4 bg-white/5 border border-white/10 mb-4">
+          <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-2">
+            Pacotes de horas
+          </p>
+
+          <p className="text-xs text-white/50 leading-relaxed mb-4">
+            Horas adquiridas antecipadamente, com agendamento conforme a
+            disponibilidade.
+          </p>
+
+          <div className="flex flex-col divide-y divide-white/10">
+            {pacotes.map((pacote) => (
+              <div
+                key={pacote.horas}
+                className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0"
+              >
+                <div>
+                  <p className="text-sm text-white/80">
+                    Pacote de{" "}
+                    <span className="font-medium text-white">
+                      {pacote.horas} horas
+                    </span>
+                  </p>
+
+                  <p className="mt-0.5 text-xs text-white/40">
+                    Validade de {pacote.validade} dias
+                  </p>
+                </div>
+
+                <span className="shrink-0 text-sm font-medium text-white">
+                  -{pacote.desconto}%
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-4 pt-3 border-t border-white/10 text-xs text-white/40 leading-relaxed">
+            Cada pacote é vinculado ao nível de ensino e à modalidade escolhida:
+            on-line, Espaço ESFERA ou domicílio.
+          </p>
+        </div>
+
+        {/* Regras dos descontos */}
+        <div className="rounded-2xl px-5 py-4 bg-white/5 border border-white/10 mb-4">
+          <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-3">
+            Regras dos descontos
+          </p>
+
+          <p className="text-sm text-white/70 leading-relaxed">
+            Os descontos de pacote, acompanhamento, aulas em grupo e condições
+            promocionais não são cumulativos. Quando houver mais de uma condição
+            aplicável, prevalecerá o maior desconto.
+          </p>
         </div>
 
         {/* Duração da aula */}
@@ -183,15 +277,25 @@ export default function ValoresPage() {
           <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-3">
             Formas de pagamento
           </p>
-          <p className="text-sm text-white/70 leading-relaxed">
-            PIX, boleto, cartão de débito ou cartão de crédito. Para valores a
-            partir de R$ 1.500,00 no cartão de crédito, parcelamento em até 3x
-            sem juros.
-          </p>
-          <p className="text-sm text-white/70 leading-relaxed">
-            Para aulas em domicílio, quando a cobrança for realizada, será por
-            meio de link de pagamento ou QR Code.
-          </p>
+
+          <div className="flex flex-col gap-3 text-sm text-white/70 leading-relaxed">
+            <p>
+              PIX, boleto, cartão de débito ou cartão de crédito. Para valores a
+              partir de R$ 1.500,00 no cartão de crédito, parcelamento em até 3x
+              sem juros.
+            </p>
+
+            <p>
+              Os pacotes de horas são pagos antecipadamente. O prazo de validade
+              começa na data da primeira aula realizada.
+            </p>
+
+            <p>
+              Para aulas em domicílio, a cobrança será realizada por meio de
+              link de pagamento ou QR Code.
+            </p>
+          </div>
+
           <p className="text-xs text-white/40 leading-relaxed mt-3">
             Todos os pagamentos são feitos diretamente ao ESFERA — nunca ao
             professor.
@@ -203,16 +307,25 @@ export default function ValoresPage() {
           <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-3">
             Quando a cobrança é enviada
           </p>
+
           <div className="flex flex-col gap-3 text-sm text-white/70 leading-relaxed">
             <p>
               <span className="text-white font-medium">Aulas pontuais:</span>{" "}
               cobrança enviada no dia seguinte à aula.
             </p>
+
             <p>
-              <span className="text-white font-medium">Acompanhamento:</span> as
-              aulas são cobradas quinzenalmente — aulas do dia 1 ao dia 15 são
-              cobradas no dia 16, e aulas do dia 16 ao último dia do mês são
-              cobradas no dia 1 do mês seguinte.
+              <span className="text-white font-medium">
+                Acompanhamento regular:
+              </span>{" "}
+              as aulas são cobradas quinzenalmente. As aulas realizadas do dia 1
+              ao dia 15 são cobradas no dia 16; as aulas realizadas do dia 16 ao
+              último dia do mês são cobradas no dia 1 do mês seguinte.
+            </p>
+
+            <p>
+              <span className="text-white font-medium">Pacotes de horas:</span>{" "}
+              cobrança integral realizada antes da utilização do pacote.
             </p>
           </div>
         </div>
