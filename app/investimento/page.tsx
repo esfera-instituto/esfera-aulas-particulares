@@ -63,25 +63,139 @@ const INSTITUICOES_FUNDAMENTAL_MEDIO = [
   "Colégio Santa Cruz",
   "Colégio Saint Paul",
   "Colégio Vértice",
+  "Colégio Agostiniano Mendel",
+  "Colégio Lourenço Castanho",
+  "Colégio Arquidiocesano",
   "Outros",
 ];
 
 const INSTITUICOES_SUPERIOR = [
+  "USP",
+  "UNICAMP",
+  "UNIFESP",
+  "UNESP",
+  "FATEC",
   "FGV SP",
   "IBMEC",
   "INSPER",
+  "Faculdade Bela Vista",
   "PUC SP",
   "Mackenzie",
-  "USP",
   "FEI",
   "Mauá",
   "Outros",
 ];
 
+const CURSINHOS_EXTERNOS = [
+  "Anglo",
+  "Poliedro",
+  "Objetivo",
+  "Etapa",
+  "CPV",
+  "BnE",
+  "Hexag",
+  "Cursinho da Poli",
+  "Outros",
+];
+
+const DISCIPLINAS_POR_NIVEL: Record<string, string[]> = {
+  fundamental_1: [
+    "Matemática",
+    "Língua Portuguesa (Gramática)",
+    "Língua Portuguesa (Produção Textual)",
+    "Ciências",
+    "História",
+    "Geografia",
+    "Língua Inglesa",
+    "Língua Espanhola",
+  ],
+  fundamental_2: [
+    "Matemática",
+    "Física",
+    "Química",
+    "Biologia",
+    "Ciências",
+    "Língua Portuguesa (Gramática)",
+    "Língua Portuguesa (Produção Textual)",
+    "História",
+    "Geografia",
+    "Língua Inglesa",
+    "Língua Espanhola",
+  ],
+  medio: [
+    "Matemática",
+    "Física",
+    "Química",
+    "Biologia",
+    "Língua Portuguesa (Gramática)",
+    "Língua Portuguesa (Literatura)",
+    "Língua Portuguesa (Interpretação de Textos)",
+    "Língua Portuguesa (Redação)",
+    "Língua Inglesa",
+    "História",
+    "Geografia",
+    "Filosofia",
+    "Língua Espanhola",
+  ],
+  superior: [
+    "Matemática Elementar",
+    "Física Elementar",
+    "Cálculo",
+    "Cálculo Numérico",
+    "Vetores e Geometria Analítica",
+    "Álgebra Linear",
+    "Matemática Discreta",
+    "Estatística",
+    "Métodos Preditivos",
+    "Física (Eletromagnetismo)",
+    "Física (Mecânica)",
+    "Física (Mecânica dos Sólidos e Fluidos)",
+    "Física (Termodinâmica)",
+    "Física Moderna",
+    "Física Quântica",
+    "Programação em Python",
+    "Programação em C++",
+    "Programação em C#",
+    "Otimização Linear",
+    "Otimização Não Linear",
+    "Matemática Financeira",
+    "Finanças",
+    "Equações Diferenciais",
+    "Contabilidade",
+    "Microeconomia",
+    "Macroeconomia",
+    "Macrodinâmica",
+    "Econometria",
+    "Pesquisa Operacional",
+  ],
+};
+
 function getInstituicoes(nivel: string) {
   if (nivel === "superior") return INSTITUICOES_SUPERIOR;
   return INSTITUICOES_FUNDAMENTAL_MEDIO;
 }
+
+const ANOS_SERIE: Record<string, string[]> = {
+  fundamental_1: ["1º ano", "2º ano", "3º ano", "4º ano", "5º ano"],
+  fundamental_2: ["6º ano", "7º ano", "8º ano", "9º ano"],
+  medio: ["1º ano", "2º ano", "3º ano"],
+};
+
+const CURSOS_SUPERIOR = [
+  "Administração de Empresas",
+  "Ciências Econômicas",
+  "Ciências Contábeis",
+  "Ciências Atuariais",
+  "Relações Internacionais",
+  "Inteligência Artificial e Ciência de Dados",
+  "Engenharia da Computação",
+  "Engenharia Civil",
+  "Engenharia Mecânica",
+  "Engenharia Elétrica",
+  "Engenharia de Produção",
+  "Ciência da Computação",
+  "Outros",
+];
 
 const VALOR_HORA: Record<string, Record<string, number>> = {
   online: { fundamental_1: 150, fundamental_2: 160, medio: 170, superior: 200 },
@@ -137,7 +251,8 @@ export default function InvestimentoPage() {
     "Dados pessoais",
     "Endereço",
     "Instituição",
-    "Responsável",
+    "Disciplinas de interesse",
+    "Responsável financeiro",
     "Revisão",
   ];
 
@@ -160,17 +275,32 @@ export default function InvestimentoPage() {
   const [cepErro, setCepErro] = useState("");
 
   // Instituição
-  const [matriculadoInstituicao, setMatriculadoInstituicao] =
-    useState<SimNao>("");
+  const [matriculadoColegio, setMatriculadoColegio] = useState<SimNao>("");
+  const [matriculadoFaculdade, setMatriculadoFaculdade] = useState<SimNao>("");
   const [anoSerie, setAnoSerie] = useState("");
   const [cursoSuperior, setCursoSuperior] = useState("");
+  const [cursoSuperiorOutro, setCursoSuperiorOutro] = useState("");
   const [instituicao, setInstituicao] = useState("");
   const [instituicaoOutro, setInstituicaoOutro] = useState("");
   const [fazCursinhoExterno, setFazCursinhoExterno] = useState<SimNao>("");
   const [cursinhoNome, setCursinhoNome] = useState("");
+  const [cursinhoNomeOutro, setCursinhoNomeOutro] = useState("");
   const [cursinhoModalidade, setCursinhoModalidade] = useState<
     "online" | "presencial" | ""
   >("");
+
+  // Disciplinas de interesse
+  const [nivelDisciplina, setNivelDisciplina] = useState("");
+  const [disciplinasInteresse, setDisciplinasInteresse] = useState<string[]>(
+    [],
+  );
+  const [outraDisciplina, setOutraDisciplina] = useState("");
+
+  function toggleDisciplina(d: string) {
+    setDisciplinasInteresse((prev) =>
+      prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d],
+    );
+  }
 
   // Responsável
   const [respEhAluno, setRespEhAluno] = useState(false);
@@ -269,7 +399,7 @@ export default function InvestimentoPage() {
     if (etapa === 0) {
       if (!nome || !telefone) return "Informe seu nome e telefone.";
     }
-    if (etapa === 3 && !respEhAluno) {
+    if (etapa === 4 && !respEhAluno) {
       if (!respNome) return "Informe o nome do(a) responsável.";
     }
     return "";
@@ -293,7 +423,7 @@ export default function InvestimentoPage() {
   async function enviarSolicitacao() {
     setErro("");
     if (ehAlunoNovo === null) {
-      setErro("Informe se já é aluno(a) da ESFERA.");
+      setErro("Informe se já é aluno(a) do ESFERA.");
       return;
     }
     setEnviando(true);
@@ -332,14 +462,16 @@ export default function InvestimentoPage() {
       cidade: cidade || null,
       estado: estado || null,
       matriculado_instituicao:
-        matriculadoInstituicao === "sim"
+        matriculadoColegio === "sim" || matriculadoFaculdade === "sim"
           ? true
-          : matriculadoInstituicao === "nao"
+          : matriculadoColegio === "nao" && matriculadoFaculdade === "nao"
             ? false
             : null,
       nivel: nivel || null,
       ano_serie: anoSerie || null,
-      curso_superior: cursoSuperior || null,
+      curso_superior:
+        (cursoSuperior === "Outros" ? cursoSuperiorOutro : cursoSuperior) ||
+        null,
       instituicao:
         (instituicao === "Outros" ? instituicaoOutro : instituicao) || null,
       faz_cursinho_externo:
@@ -348,8 +480,17 @@ export default function InvestimentoPage() {
           : fazCursinhoExterno === "nao"
             ? false
             : null,
-      cursinho_nome: cursinhoNome || null,
+      cursinho_nome:
+        (cursinhoNome === "Outros" ? cursinhoNomeOutro : cursinhoNome) || null,
       cursinho_modalidade: cursinhoModalidade || null,
+      disciplinas_interesse:
+        [...disciplinasInteresse, ...(outraDisciplina ? [outraDisciplina] : [])]
+          .length > 0
+          ? [
+              ...disciplinasInteresse,
+              ...(outraDisciplina ? [outraDisciplina] : []),
+            ]
+          : null,
       resp_e_aluno: respEhAluno,
       resp_nome: respEhAluno ? nome : respNome,
       resp_parentesco: respParentesco || null,
@@ -621,6 +762,7 @@ export default function InvestimentoPage() {
 
             {etapa === 0 && (
               <div className="flex flex-col gap-3">
+                <p className="text-xs text-white/60">Dados do(a) aluno(a)</p>
                 <input
                   type="text"
                   value={nome}
@@ -635,12 +777,17 @@ export default function InvestimentoPage() {
                   placeholder="CPF"
                   className={inputClass}
                 />
-                <input
-                  type="date"
-                  value={dataNascimento}
-                  onChange={(e) => setDataNascimento(e.target.value)}
-                  className={inputClass}
-                />
+                <div>
+                  <label className="text-xs text-white/40 mb-1 block">
+                    Data de nascimento
+                  </label>
+                  <input
+                    type="date"
+                    value={dataNascimento}
+                    onChange={(e) => setDataNascimento(e.target.value)}
+                    className={inputClass}
+                  />
+                </div>
                 <input
                   type="email"
                   value={email}
@@ -660,6 +807,7 @@ export default function InvestimentoPage() {
 
             {etapa === 1 && (
               <div className="flex flex-col gap-3">
+                <p className="text-xs text-white/60">Endereço do(a) aluno(a)</p>
                 <input
                   type="text"
                   value={cep}
@@ -729,123 +877,307 @@ export default function InvestimentoPage() {
             )}
 
             {etapa === 2 && (
-              <div className="flex flex-col gap-3">
-                <p className="text-xs text-white/60">
-                  Está matriculado(a) em colégio ou faculdade?
-                </p>
-                <div className="flex gap-2">
-                  {(["sim", "nao"] as SimNao[]).map((v) => (
-                    <button
-                      key={v}
-                      type="button"
-                      onClick={() => setMatriculadoInstituicao(v)}
-                      className={`flex-1 px-3 py-2 rounded-lg text-sm border ${matriculadoInstituicao === v ? "bg-white/20 border-white/40 text-white" : "bg-white/5 border-white/10 text-white/60"}`}
-                    >
-                      {v === "sim" ? "Sim" : "Não"}
-                    </button>
-                  ))}
-                </div>
+              <div className="flex flex-col gap-4">
+                {/* Colégio */}
+                <div>
+                  <p className="text-xs text-white/60 mb-2">
+                    Está matriculado(a) em Colégio?
+                  </p>
+                  <div className="flex gap-2">
+                    {(["sim", "nao"] as SimNao[]).map((v) => (
+                      <button
+                        key={v}
+                        type="button"
+                        onClick={() => {
+                          setMatriculadoColegio(v);
+                          if (v === "sim") setMatriculadoFaculdade("nao");
+                          setNivel("");
+                          setAnoSerie("");
+                          setInstituicao("");
+                          setInstituicaoOutro("");
+                        }}
+                        className={`flex-1 px-3 py-2 rounded-lg text-sm border ${matriculadoColegio === v ? "bg-white/20 border-white/40 text-white" : "bg-white/5 border-white/10 text-white/60"}`}
+                      >
+                        {v === "sim" ? "Sim" : "Não"}
+                      </button>
+                    ))}
+                  </div>
 
-                {matriculadoInstituicao === "sim" && (
-                  <>
-                    {nivel !== "superior" && (
-                      <input
-                        type="text"
-                        value={anoSerie}
-                        onChange={(e) => setAnoSerie(e.target.value)}
-                        placeholder="Ano/Série"
-                        className={inputClass}
-                      />
-                    )}
-                    {nivel === "superior" && (
-                      <input
-                        type="text"
-                        value={cursoSuperior}
-                        onChange={(e) => setCursoSuperior(e.target.value)}
-                        placeholder="Curso"
-                        className={inputClass}
-                      />
-                    )}
-                    <select
-                      value={instituicao}
-                      onChange={(e) => setInstituicao(e.target.value)}
-                      className={selectClass}
-                    >
-                      <option value="" className="text-gray-800">
-                        Selecione a instituição
-                      </option>
-                      {getInstituicoes(nivel).map((i) => (
-                        <option key={i} value={i} className="text-gray-800">
-                          {i}
-                        </option>
-                      ))}
-                    </select>
-                    {instituicao === "Outros" && (
-                      <input
-                        type="text"
-                        value={instituicaoOutro}
-                        onChange={(e) => setInstituicaoOutro(e.target.value)}
-                        placeholder="Especifique a instituição"
-                        className={inputClass}
-                      />
-                    )}
-                  </>
-                )}
+                  {matriculadoColegio === "sim" && (
+                    <div className="flex flex-col gap-2 mt-3">
+                      <div className="flex flex-col gap-2">
+                        {NIVEIS.filter((n) => n.value !== "superior").map(
+                          (n) => (
+                            <button
+                              key={n.value}
+                              type="button"
+                              onClick={() => {
+                                setNivel(n.value);
+                                setAnoSerie("");
+                                setInstituicao("");
+                                setInstituicaoOutro("");
+                              }}
+                              className={`text-left px-3 py-2 rounded-lg text-sm border ${nivel === n.value ? "bg-white/20 border-white/40 text-white" : "bg-white/5 border-white/10 text-white/60"}`}
+                            >
+                              {n.label}
+                            </button>
+                          ),
+                        )}
+                      </div>
 
-                {matriculadoInstituicao === "nao" && (
-                  <>
-                    <p className="text-xs text-white/60 mt-2">
-                      Faz algum cursinho fora do ESFERA?
-                    </p>
-                    <div className="flex gap-2">
-                      {(["sim", "nao"] as SimNao[]).map((v) => (
-                        <button
-                          key={v}
-                          type="button"
-                          onClick={() => setFazCursinhoExterno(v)}
-                          className={`flex-1 px-3 py-2 rounded-lg text-sm border ${fazCursinhoExterno === v ? "bg-white/20 border-white/40 text-white" : "bg-white/5 border-white/10 text-white/60"}`}
+                      {nivel && ANOS_SERIE[nivel] && (
+                        <select
+                          value={anoSerie}
+                          onChange={(e) => setAnoSerie(e.target.value)}
+                          className={selectClass}
                         >
-                          {v === "sim" ? "Sim" : "Não"}
-                        </button>
-                      ))}
-                    </div>
-                    {fazCursinhoExterno === "sim" && (
-                      <>
+                          <option value="" className="text-gray-800">
+                            Selecione o ano/série
+                          </option>
+                          {ANOS_SERIE[nivel].map((a) => (
+                            <option key={a} value={a} className="text-gray-800">
+                              {a}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+
+                      {nivel && (
+                        <select
+                          value={instituicao}
+                          onChange={(e) => setInstituicao(e.target.value)}
+                          className={selectClass}
+                        >
+                          <option value="" className="text-gray-800">
+                            Selecione a instituição
+                          </option>
+                          {INSTITUICOES_FUNDAMENTAL_MEDIO.map((i) => (
+                            <option key={i} value={i} className="text-gray-800">
+                              {i}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                      {instituicao === "Outros" && (
                         <input
                           type="text"
-                          value={cursinhoNome}
-                          onChange={(e) => setCursinhoNome(e.target.value)}
-                          placeholder="Qual cursinho?"
+                          value={instituicaoOutro}
+                          onChange={(e) => setInstituicaoOutro(e.target.value)}
+                          placeholder="Especifique a instituição"
                           className={inputClass}
                         />
-                        <div className="flex gap-2">
-                          {(["online", "presencial"] as const).map((v) => (
-                            <button
-                              key={v}
-                              type="button"
-                              onClick={() => setCursinhoModalidade(v)}
-                              className={`flex-1 px-3 py-2 rounded-lg text-sm border ${cursinhoModalidade === v ? "bg-white/20 border-white/40 text-white" : "bg-white/5 border-white/10 text-white/60"}`}
-                            >
-                              {v === "online" ? "Online" : "Presencial"}
-                            </button>
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  </>
-                )}
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Faculdade */}
+                <div className="border-t border-white/10 pt-4">
+                  <p className="text-xs text-white/60 mb-2">
+                    Está matriculado(a) em Faculdade?
+                  </p>
+                  <div className="flex gap-2">
+                    {(["sim", "nao"] as SimNao[]).map((v) => (
+                      <button
+                        key={v}
+                        type="button"
+                        onClick={() => {
+                          setMatriculadoFaculdade(v);
+                          if (v === "sim") {
+                            setMatriculadoColegio("nao");
+                            setNivel("superior");
+                          } else if (nivel === "superior") {
+                            setNivel("");
+                          }
+                          setCursoSuperior("");
+                          setCursoSuperiorOutro("");
+                          setInstituicao("");
+                          setInstituicaoOutro("");
+                        }}
+                        className={`flex-1 px-3 py-2 rounded-lg text-sm border ${matriculadoFaculdade === v ? "bg-white/20 border-white/40 text-white" : "bg-white/5 border-white/10 text-white/60"}`}
+                      >
+                        {v === "sim" ? "Sim" : "Não"}
+                      </button>
+                    ))}
+                  </div>
+
+                  {matriculadoFaculdade === "sim" && (
+                    <div className="flex flex-col gap-2 mt-3">
+                      <select
+                        value={cursoSuperior}
+                        onChange={(e) => setCursoSuperior(e.target.value)}
+                        className={selectClass}
+                      >
+                        <option value="" className="text-gray-800">
+                          Selecione o curso
+                        </option>
+                        {CURSOS_SUPERIOR.map((c) => (
+                          <option key={c} value={c} className="text-gray-800">
+                            {c}
+                          </option>
+                        ))}
+                      </select>
+                      {cursoSuperior === "Outros" && (
+                        <input
+                          type="text"
+                          value={cursoSuperiorOutro}
+                          onChange={(e) =>
+                            setCursoSuperiorOutro(e.target.value)
+                          }
+                          placeholder="Especifique o curso"
+                          className={inputClass}
+                        />
+                      )}
+
+                      <select
+                        value={instituicao}
+                        onChange={(e) => setInstituicao(e.target.value)}
+                        className={selectClass}
+                      >
+                        <option value="" className="text-gray-800">
+                          Selecione a instituição
+                        </option>
+                        {INSTITUICOES_SUPERIOR.map((i) => (
+                          <option key={i} value={i} className="text-gray-800">
+                            {i}
+                          </option>
+                        ))}
+                      </select>
+                      {instituicao === "Outros" && (
+                        <input
+                          type="text"
+                          value={instituicaoOutro}
+                          onChange={(e) => setInstituicaoOutro(e.target.value)}
+                          placeholder="Especifique a instituição"
+                          className={inputClass}
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Cursinho externo — sempre disponível, independente de colégio/faculdade */}
+                <div className="border-t border-white/10 pt-4">
+                  <p className="text-xs text-white/60 mb-2">
+                    Faz algum cursinho preparatório fora do ESFERA?
+                  </p>
+                  <div className="flex gap-2">
+                    {(["sim", "nao"] as SimNao[]).map((v) => (
+                      <button
+                        key={v}
+                        type="button"
+                        onClick={() => setFazCursinhoExterno(v)}
+                        className={`flex-1 px-3 py-2 rounded-lg text-sm border ${fazCursinhoExterno === v ? "bg-white/20 border-white/40 text-white" : "bg-white/5 border-white/10 text-white/60"}`}
+                      >
+                        {v === "sim" ? "Sim" : "Não"}
+                      </button>
+                    ))}
+                  </div>
+                  {fazCursinhoExterno === "sim" && (
+                    <div className="flex flex-col gap-2 mt-2">
+                      <select
+                        value={cursinhoNome}
+                        onChange={(e) => setCursinhoNome(e.target.value)}
+                        className={selectClass}
+                      >
+                        <option value="" className="text-gray-800">
+                          Selecione o cursinho
+                        </option>
+                        {CURSINHOS_EXTERNOS.map((c) => (
+                          <option key={c} value={c} className="text-gray-800">
+                            {c}
+                          </option>
+                        ))}
+                      </select>
+                      {cursinhoNome === "Outros" && (
+                        <input
+                          type="text"
+                          value={cursinhoNomeOutro}
+                          onChange={(e) => setCursinhoNomeOutro(e.target.value)}
+                          placeholder="Especifique o cursinho"
+                          className={inputClass}
+                        />
+                      )}
+                      <div className="flex gap-2">
+                        {(["online", "presencial"] as const).map((v) => (
+                          <button
+                            key={v}
+                            type="button"
+                            onClick={() => setCursinhoModalidade(v)}
+                            className={`flex-1 px-3 py-2 rounded-lg text-sm border ${cursinhoModalidade === v ? "bg-white/20 border-white/40 text-white" : "bg-white/5 border-white/10 text-white/60"}`}
+                          >
+                            {v === "online" ? "Online" : "Presencial"}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
             {etapa === 3 && (
               <div className="flex flex-col gap-3">
+                <p className="text-xs text-white/60">
+                  Selecione o(s) nível(is) de ensino de interesse
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  {NIVEIS.map((n) => (
+                    <button
+                      key={n.value}
+                      type="button"
+                      onClick={() =>
+                        setNivelDisciplina(
+                          nivelDisciplina === n.value ? "" : n.value,
+                        )
+                      }
+                      className={`px-3 py-2 rounded-lg text-sm border ${nivelDisciplina === n.value ? "bg-white/20 border-white/40 text-white" : "bg-white/5 border-white/10 text-white/60"}`}
+                    >
+                      {n.label}
+                    </button>
+                  ))}
+                </div>
+
+                {nivelDisciplina && (
+                  <div className="mt-2">
+                    <p className="text-xs text-white/40 mb-2">
+                      Disciplinas —{" "}
+                      {NIVEIS.find((n) => n.value === nivelDisciplina)?.label}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {DISCIPLINAS_POR_NIVEL[nivelDisciplina]?.map((d) => (
+                        <button
+                          key={d}
+                          type="button"
+                          onClick={() => toggleDisciplina(d)}
+                          className={`px-3 py-1.5 rounded-lg text-xs border ${disciplinasInteresse.includes(d) ? "bg-white/20 border-white/40 text-white" : "bg-white/5 border-white/10 text-white/60"}`}
+                        >
+                          {d}
+                        </button>
+                      ))}
+                    </div>
+                    <input
+                      type="text"
+                      value={outraDisciplina}
+                      onChange={(e) => setOutraDisciplina(e.target.value)}
+                      placeholder="Outra disciplina (opcional)"
+                      className={`${inputClass} mt-2`}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {etapa === 4 && (
+              <div className="flex flex-col gap-3">
+                <p className="text-xs text-white/60">Responsável financeiro</p>
                 <button
                   type="button"
                   onClick={toggleRespEhAluno}
                   className={`flex items-center gap-2 text-sm px-4 py-2 rounded-lg border ${respEhAluno ? "bg-white/20 border-white/40 text-white" : "text-white/60 border-white/10"}`}
                 >
-                  <span>{respEhAluno ? "✓" : "○"}</span> O responsável sou eu
-                  mesmo(a)
+                  <span>{respEhAluno ? "✓" : "○"}</span> O(a) responsável
+                  financeiro(a) sou eu mesmo(a)
                 </button>
 
                 {!respEhAluno && (
@@ -854,7 +1186,7 @@ export default function InvestimentoPage() {
                       type="text"
                       value={respNome}
                       onChange={(e) => setRespNome(e.target.value)}
-                      placeholder="Nome do(a) responsável *"
+                      placeholder="Nome do(a) responsável financeiro(a) *"
                       className={inputClass}
                     />
                     <select
@@ -1000,10 +1332,10 @@ export default function InvestimentoPage() {
               </div>
             )}
 
-            {etapa === 4 && (
+            {etapa === 5 && (
               <div className="flex flex-col gap-3">
                 <p className="text-xs text-white/60 mb-1">
-                  Já é aluno(a) da ESFERA?
+                  Já é aluno(a) do ESFERA?
                 </p>
                 <div className="flex gap-2">
                   <button
