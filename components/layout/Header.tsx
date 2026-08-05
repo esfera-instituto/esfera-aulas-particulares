@@ -88,6 +88,12 @@ export const Header = () => {
               </Link>
             ))}
             <Link
+              href="/investimento"
+              className="rounded-lg bg-[#1566A0] px-4 py-2 text-white transition-colors hover:bg-[#1A7FBA]"
+            >
+              Investimento
+            </Link>
+            <Link
               href="/sala-do-aluno"
               className="rounded-lg bg-[#08364E] px-4 py-2 text-white transition-colors hover:bg-[#0a4a6a]"
             >
@@ -108,6 +114,13 @@ export const Header = () => {
                 {link.label}
               </Link>
             ))}
+            <Link
+              href="/investimento"
+              className="rounded-md bg-[#1566A0] px-3 py-2.5 text-white transition-colors hover:bg-[#1A7FBA] mt-2 text-center"
+              onClick={() => setMenuAberto(false)}
+            >
+              Investimento
+            </Link>
             <Link
               href="/sala-do-aluno"
               className="rounded-md bg-[#08364E] px-3 py-2.5 text-white transition-colors hover:bg-[#0a4a6a] mt-2 text-center"
