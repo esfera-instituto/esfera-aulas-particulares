@@ -414,6 +414,12 @@ export default function SalaDoAlunoPage() {
                   Nenhuma aula agendada no momento.
                 </p>
               )}
+              <a
+                href="/sala-do-aluno/aulas"
+                className="inline-block text-xs text-[#08364E] font-medium hover:underline mt-4"
+              >
+                ver todas as aulas →
+              </a>
             </div>
 
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
@@ -453,6 +459,12 @@ export default function SalaDoAlunoPage() {
                   Ainda não há relatório disponível.
                 </p>
               )}
+              <a
+                href="/sala-do-aluno/relatorios"
+                className="inline-block text-xs text-[#08364E] font-medium hover:underline mt-4"
+              >
+                ver todos os relatórios →
+              </a>
             </div>
 
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
