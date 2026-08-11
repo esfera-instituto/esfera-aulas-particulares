@@ -14,6 +14,9 @@ type Aula = {
   local: string | null;
   status: string;
   duracao_minutos_real: number | null;
+  aluno_id: string | null;
+  quantidade_alunos: number;
+  alunos?: { nome: string };
   professores?: { nome: string; telefone: string | null };
 };
 
@@ -69,6 +72,9 @@ export default function AulasAlunoPage() {
 
   const [proximas, setProximas] = useState<Aula[]>([]);
   const [historico, setHistorico] = useState<Aula[]>([]);
+  const [colegasPorAula, setColegasPorAula] = useState<
+    Record<string, string[]>
+  >({});
   const [carregando, setCarregando] = useState(false);
 
   const [proximasExpandidas, setProximasExpandidas] = useState(false);
@@ -115,13 +121,46 @@ export default function AulasAlunoPage() {
     return (participacoes || []).map((p) => p.aula_id);
   }
 
+  async function carregarColegas(aulas: Aula[], alunoAtualId: string) {
+    const aulasGrupo = aulas.filter((a) => a.quantidade_alunos > 1);
+    if (aulasGrupo.length === 0) {
+      setColegasPorAula({});
+      return;
+    }
+
+    const idsGrupo = aulasGrupo.map((a) => a.id);
+    const { data: participantes } = await supabase
+      .from("aula_alunos")
+      .select("aula_id, aluno_id, alunos(nome)")
+      .in("aula_id", idsGrupo);
+
+    const mapa: Record<string, string[]> = {};
+
+    aulasGrupo.forEach((a) => {
+      const nomes: string[] = [];
+      if (a.aluno_id && a.aluno_id !== alunoAtualId && a.alunos?.nome) {
+        nomes.push(a.alunos.nome);
+      }
+      mapa[a.id] = nomes;
+    });
+
+    (participantes || []).forEach((p: any) => {
+      if (p.aluno_id !== alunoAtualId && p.alunos?.nome) {
+        if (!mapa[p.aula_id]) mapa[p.aula_id] = [];
+        mapa[p.aula_id].push(p.alunos.nome);
+      }
+    });
+
+    setColegasPorAula(mapa);
+  }
+
   async function carregarAulas(alunoId: string) {
     setCarregando(true);
     const agora = new Date().toISOString();
     const idsGrupo = await idsRelevantes(alunoId);
 
     const campos =
-      "id, data_hora, disciplina, local, status, duracao_minutos_real, professores(nome, telefone)";
+      "id, data_hora, disciplina, local, status, duracao_minutos_real, aluno_id, quantidade_alunos, alunos(nome), professores(nome, telefone)";
 
     const { data: principaisFuturas } = await supabase
       .from("aulas")
@@ -175,6 +214,8 @@ export default function AulasAlunoPage() {
     );
     setHistorico(todasPassadas);
 
+    await carregarColegas([...todasFuturas, ...todasPassadas], alunoId);
+
     setCarregando(false);
   }
 
@@ -197,6 +238,7 @@ export default function AulasAlunoPage() {
   const proximasRestantes = proximas.length - LIMITE_PROXIMAS;
 
   function CardAula({ aula }: { aula: Aula }) {
+    const colegas = colegasPorAula[aula.id] || [];
     return (
       <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
         <p className="text-sm font-semibold text-[#08364E]">
@@ -206,6 +248,18 @@ export default function AulasAlunoPage() {
           {aula.disciplina || "—"}
           {aula.professores?.nome && ` · com ${aula.professores.nome}`}
         </p>
+        {aula.quantidade_alunos > 1 && (
+          <div className="bg-blue-50 rounded-lg px-3 py-2 mt-2">
+            <p className="text-xs text-blue-700 font-medium">
+              Aula em grupo ({aula.quantidade_alunos} alunos)
+            </p>
+            {colegas.length > 0 && (
+              <p className="text-xs text-blue-600 mt-0.5">
+                Com: {colegas.join(", ")}
+              </p>
+            )}
+          </div>
+        )}
         <p className="text-xs text-gray-400 mt-1">
           {LABEL_LOCAL[aula.local || ""] || "—"} ·{" "}
           {LABEL_STATUS[aula.status] || aula.status}

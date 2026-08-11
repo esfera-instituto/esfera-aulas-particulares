@@ -13,6 +13,8 @@ type ProximaAula = {
   disciplina: string | null;
   local: string | null;
   status: string;
+  aluno_id: string | null;
+  quantidade_alunos: number;
   professores?: { nome: string; telefone: string | null };
 };
 
@@ -89,6 +91,7 @@ export default function SalaDoAlunoPage() {
   const [carregandoConteudo, setCarregandoConteudo] = useState(false);
 
   const [proximaAula, setProximaAula] = useState<ProximaAula | null>(null);
+  const [colegasProximaAula, setColegasProximaAula] = useState<string[]>([]);
   const [relatorio, setRelatorio] = useState<RelatorioFamilia | null>(null);
   const [cobrancas, setCobrancas] = useState<Cobranca[]>([]);
 
@@ -126,6 +129,36 @@ export default function SalaDoAlunoPage() {
     if (lista.length > 0) setAlunoAtivoId(lista[0].id);
   }
 
+  async function buscarColegasGrupo(
+    aulaId: string,
+    alunoPrincipalId: string | null,
+    alunoAtualId: string,
+  ) {
+    const nomes: string[] = [];
+
+    if (alunoPrincipalId && alunoPrincipalId !== alunoAtualId) {
+      const { data } = await supabase
+        .from("alunos")
+        .select("nome")
+        .eq("id", alunoPrincipalId)
+        .maybeSingle();
+      if (data?.nome) nomes.push(data.nome);
+    }
+
+    const { data: participantes } = await supabase
+      .from("aula_alunos")
+      .select("aluno_id, alunos(nome)")
+      .eq("aula_id", aulaId);
+
+    (participantes || []).forEach((p: any) => {
+      if (p.aluno_id !== alunoAtualId && p.alunos?.nome) {
+        nomes.push(p.alunos.nome);
+      }
+    });
+
+    return nomes;
+  }
+
   async function carregarConteudo(alunoId: string) {
     setCarregandoConteudo(true);
 
@@ -134,7 +167,7 @@ export default function SalaDoAlunoPage() {
     const { data: aulaPrincipal } = await supabase
       .from("aulas")
       .select(
-        "id, data_hora, disciplina, local, status, professores(nome, telefone)",
+        "id, data_hora, disciplina, local, status, aluno_id, quantidade_alunos, professores(nome, telefone)",
       )
       .eq("aluno_id", alunoId)
       .in("status", ["solicitada", "agendada", "confirmada"])
@@ -154,7 +187,7 @@ export default function SalaDoAlunoPage() {
       const { data } = await supabase
         .from("aulas")
         .select(
-          "id, data_hora, disciplina, local, status, professores(nome, telefone)",
+          "id, data_hora, disciplina, local, status, aluno_id, quantidade_alunos, professores(nome, telefone)",
         )
         .in("id", idsGrupo)
         .in("status", ["solicitada", "agendada", "confirmada"])
@@ -172,7 +205,19 @@ export default function SalaDoAlunoPage() {
       (a, b) =>
         new Date(a.data_hora).getTime() - new Date(b.data_hora).getTime(),
     );
-    setProximaAula(candidatas[0] || null);
+    const aulaEscolhida = candidatas[0] || null;
+    setProximaAula(aulaEscolhida);
+
+    if (aulaEscolhida && aulaEscolhida.quantidade_alunos > 1) {
+      const colegas = await buscarColegasGrupo(
+        aulaEscolhida.id,
+        aulaEscolhida.aluno_id,
+        alunoId,
+      );
+      setColegasProximaAula(colegas);
+    } else {
+      setColegasProximaAula([]);
+    }
 
     const { data: rel } = await supabase
       .from("relatorios_pedagogicos")
@@ -392,6 +437,18 @@ export default function SalaDoAlunoPage() {
                     {proximaAula.professores?.nome &&
                       ` · com ${proximaAula.professores.nome}`}
                   </p>
+                  {proximaAula.quantidade_alunos > 1 && (
+                    <div className="bg-blue-50 rounded-lg px-3 py-2 mt-2">
+                      <p className="text-xs text-blue-700 font-medium">
+                        Aula em grupo ({proximaAula.quantidade_alunos} alunos)
+                      </p>
+                      {colegasProximaAula.length > 0 && (
+                        <p className="text-xs text-blue-600 mt-0.5">
+                          Com: {colegasProximaAula.join(", ")}
+                        </p>
+                      )}
+                    </div>
+                  )}
                   <p className="text-xs text-gray-400 mt-1">
                     {LABEL_LOCAL[proximaAula.local || ""] || "—"} ·{" "}
                     {LABEL_STATUS_AULA[proximaAula.status] ||
