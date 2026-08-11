@@ -16,6 +16,12 @@ type Aula = {
   duracao_minutos_real: number | null;
   aluno_id: string | null;
   quantidade_alunos: number;
+  local_rua: string | null;
+  local_numero: string | null;
+  local_complemento: string | null;
+  local_bairro: string | null;
+  local_cidade: string | null;
+  local_estado: string | null;
   alunos?: { nome: string };
   professores?: { nome: string; telefone: string | null };
 };
@@ -23,7 +29,7 @@ type Aula = {
 const LABEL_LOCAL: Record<string, string> = {
   online: "On-line",
   espaco_esfera: "Presencial — Espaço ESFERA",
-  domicilio: "Presencial — na sua casa",
+  domicilio: "Presencial — Domicílio",
 };
 
 const LABEL_STATUS: Record<string, string> = {
@@ -64,6 +70,28 @@ function formatarTelefone(tel: string) {
   return tel;
 }
 
+function formatarLocalTexto(aula: {
+  local: string | null;
+  local_rua: string | null;
+  local_numero: string | null;
+  local_complemento: string | null;
+  local_bairro: string | null;
+  local_cidade: string | null;
+  local_estado: string | null;
+}) {
+  if (aula.local === "domicilio" && aula.local_rua) {
+    const numero = aula.local_numero || "s/n";
+    const complemento = aula.local_complemento
+      ? ` - ${aula.local_complemento}`
+      : "";
+    return `Presencial — ${aula.local_rua}, ${numero}${complemento} — ${aula.local_bairro}, ${aula.local_cidade}/${aula.local_estado}`;
+  }
+  return LABEL_LOCAL[aula.local || ""] || "—";
+}
+
+const CAMPOS_AULA =
+  "id, data_hora, disciplina, local, status, duracao_minutos_real, aluno_id, quantidade_alunos, local_rua, local_numero, local_complemento, local_bairro, local_cidade, local_estado, alunos(nome), professores(nome, telefone)";
+
 export default function AulasAlunoPage() {
   const [carregandoSessao, setCarregandoSessao] = useState(true);
   const [authUserId, setAuthUserId] = useState<string | null>(null);
@@ -100,9 +128,15 @@ export default function AulasAlunoPage() {
         .from("acessos_aluno")
         .select("aluno_id, alunos(nome)")
         .eq("auth_user_id", authUserId);
-      const lista: AlunoVinculado[] = (data || [])
-        .filter((d: any) => d.aluno_id)
-        .map((d: any) => ({ id: d.aluno_id, nome: d.alunos?.nome || "—" }));
+
+      const vistos = new Set<string>();
+      const lista: AlunoVinculado[] = [];
+      (data || []).forEach((d: any) => {
+        if (!d.aluno_id || vistos.has(d.aluno_id)) return;
+        vistos.add(d.aluno_id);
+        lista.push({ id: d.aluno_id, nome: d.alunos?.nome || "—" });
+      });
+
       setAlunos(lista);
       if (lista.length > 0) setAlunoAtivoId(lista[0].id);
     }
@@ -159,12 +193,9 @@ export default function AulasAlunoPage() {
     const agora = new Date().toISOString();
     const idsGrupo = await idsRelevantes(alunoId);
 
-    const campos =
-      "id, data_hora, disciplina, local, status, duracao_minutos_real, aluno_id, quantidade_alunos, alunos(nome), professores(nome, telefone)";
-
     const { data: principaisFuturas } = await supabase
       .from("aulas")
-      .select(campos)
+      .select(CAMPOS_AULA)
       .eq("aluno_id", alunoId)
       .in("status", ["solicitada", "agendada", "confirmada"])
       .gte("data_hora", agora);
@@ -173,7 +204,7 @@ export default function AulasAlunoPage() {
     if (idsGrupo.length > 0) {
       const { data } = await supabase
         .from("aulas")
-        .select(campos)
+        .select(CAMPOS_AULA)
         .in("id", idsGrupo)
         .in("status", ["solicitada", "agendada", "confirmada"])
         .gte("data_hora", agora);
@@ -191,7 +222,7 @@ export default function AulasAlunoPage() {
 
     const { data: principaisPassadas } = await supabase
       .from("aulas")
-      .select(campos)
+      .select(CAMPOS_AULA)
       .eq("aluno_id", alunoId)
       .in("status", ["realizada", "paga", "cancelada"]);
 
@@ -199,7 +230,7 @@ export default function AulasAlunoPage() {
     if (idsGrupo.length > 0) {
       const { data } = await supabase
         .from("aulas")
-        .select(campos)
+        .select(CAMPOS_AULA)
         .in("id", idsGrupo)
         .in("status", ["realizada", "paga", "cancelada"]);
       grupoPassadas = data || [];
@@ -251,7 +282,7 @@ export default function AulasAlunoPage() {
         {aula.quantidade_alunos > 1 && (
           <div className="bg-blue-50 rounded-lg px-3 py-2 mt-2">
             <p className="text-xs text-blue-700 font-medium">
-              Aula em grupo ({aula.quantidade_alunos} alunos)
+              Aula em grupo ({aula.quantidade_alunos} aluno(a)s)
             </p>
             {colegas.length > 0 && (
               <p className="text-xs text-blue-600 mt-0.5">
@@ -261,7 +292,7 @@ export default function AulasAlunoPage() {
           </div>
         )}
         <p className="text-xs text-gray-400 mt-1">
-          {LABEL_LOCAL[aula.local || ""] || "—"} ·{" "}
+          {formatarLocalTexto(aula)} ·{" "}
           {LABEL_STATUS[aula.status] || aula.status}
           {aula.duracao_minutos_real &&
             ` · ${formatarDuracao(aula.duracao_minutos_real)}`}
