@@ -15,6 +15,12 @@ type ProximaAula = {
   status: string;
   aluno_id: string | null;
   quantidade_alunos: number;
+  local_rua: string | null;
+  local_numero: string | null;
+  local_complemento: string | null;
+  local_bairro: string | null;
+  local_cidade: string | null;
+  local_estado: string | null;
   professores?: { nome: string; telefone: string | null };
 };
 
@@ -66,7 +72,7 @@ function formatarTelefone(tel: string) {
 const LABEL_LOCAL: Record<string, string> = {
   online: "On-line",
   espaco_esfera: "Presencial — Espaço ESFERA",
-  domicilio: "Presencial — na sua casa",
+  domicilio: "Presencial — Domicílio",
 };
 
 const LABEL_STATUS_AULA: Record<string, string> = {
@@ -74,6 +80,28 @@ const LABEL_STATUS_AULA: Record<string, string> = {
   agendada: "Agendada",
   confirmada: "Confirmada",
 };
+
+function formatarLocalTexto(aula: {
+  local: string | null;
+  local_rua: string | null;
+  local_numero: string | null;
+  local_complemento: string | null;
+  local_bairro: string | null;
+  local_cidade: string | null;
+  local_estado: string | null;
+}) {
+  if (aula.local === "domicilio" && aula.local_rua) {
+    const numero = aula.local_numero || "s/n";
+    const complemento = aula.local_complemento
+      ? ` - ${aula.local_complemento}`
+      : "";
+    return `Presencial — ${aula.local_rua}, ${numero}${complemento} — ${aula.local_bairro}, ${aula.local_cidade}/${aula.local_estado}`;
+  }
+  return LABEL_LOCAL[aula.local || ""] || "—";
+}
+
+const CAMPOS_PROXIMA_AULA =
+  "id, data_hora, disciplina, local, status, aluno_id, quantidade_alunos, local_rua, local_numero, local_complemento, local_bairro, local_cidade, local_estado, professores(nome, telefone)";
 
 export default function SalaDoAlunoPage() {
   const [carregandoSessao, setCarregandoSessao] = useState(true);
@@ -121,42 +149,24 @@ export default function SalaDoAlunoPage() {
       .select("aluno_id, alunos(nome)")
       .eq("auth_user_id", uid);
 
-    const lista: AlunoVinculado[] = (data || [])
-      .filter((d: any) => d.aluno_id)
-      .map((d: any) => ({ id: d.aluno_id, nome: d.alunos?.nome || "—" }));
+    const vistos = new Set<string>();
+    const lista: AlunoVinculado[] = [];
+    (data || []).forEach((d: any) => {
+      if (!d.aluno_id || vistos.has(d.aluno_id)) return;
+      vistos.add(d.aluno_id);
+      lista.push({ id: d.aluno_id, nome: d.alunos?.nome || "—" });
+    });
 
     setAlunos(lista);
     if (lista.length > 0) setAlunoAtivoId(lista[0].id);
   }
 
-  async function buscarColegasGrupo(
-    aulaId: string,
-    alunoPrincipalId: string | null,
-    alunoAtualId: string,
-  ) {
-    const nomes: string[] = [];
-
-    if (alunoPrincipalId && alunoPrincipalId !== alunoAtualId) {
-      const { data } = await supabase
-        .from("alunos")
-        .select("nome")
-        .eq("id", alunoPrincipalId)
-        .maybeSingle();
-      if (data?.nome) nomes.push(data.nome);
-    }
-
-    const { data: participantes } = await supabase
-      .from("aula_alunos")
-      .select("aluno_id, alunos(nome)")
-      .eq("aula_id", aulaId);
-
-    (participantes || []).forEach((p: any) => {
-      if (p.aluno_id !== alunoAtualId && p.alunos?.nome) {
-        nomes.push(p.alunos.nome);
-      }
+  async function buscarColegasGrupo(aulaId: string, alunoAtualId: string) {
+    const { data } = await supabase.rpc("nomes_colegas_aula", {
+      p_aula_id: aulaId,
+      p_aluno_id: alunoAtualId,
     });
-
-    return nomes;
+    return (data || []).map((d: { nome: string }) => d.nome);
   }
 
   async function carregarConteudo(alunoId: string) {
@@ -166,9 +176,7 @@ export default function SalaDoAlunoPage() {
 
     const { data: aulaPrincipal } = await supabase
       .from("aulas")
-      .select(
-        "id, data_hora, disciplina, local, status, aluno_id, quantidade_alunos, professores(nome, telefone)",
-      )
+      .select(CAMPOS_PROXIMA_AULA)
       .eq("aluno_id", alunoId)
       .in("status", ["solicitada", "agendada", "confirmada"])
       .gte("data_hora", agora)
@@ -186,9 +194,7 @@ export default function SalaDoAlunoPage() {
     if (idsGrupo.length > 0) {
       const { data } = await supabase
         .from("aulas")
-        .select(
-          "id, data_hora, disciplina, local, status, aluno_id, quantidade_alunos, professores(nome, telefone)",
-        )
+        .select(CAMPOS_PROXIMA_AULA)
         .in("id", idsGrupo)
         .in("status", ["solicitada", "agendada", "confirmada"])
         .gte("data_hora", agora)
@@ -209,11 +215,7 @@ export default function SalaDoAlunoPage() {
     setProximaAula(aulaEscolhida);
 
     if (aulaEscolhida && aulaEscolhida.quantidade_alunos > 1) {
-      const colegas = await buscarColegasGrupo(
-        aulaEscolhida.id,
-        aulaEscolhida.aluno_id,
-        alunoId,
-      );
+      const colegas = await buscarColegasGrupo(aulaEscolhida.id, alunoId);
       setColegasProximaAula(colegas);
     } else {
       setColegasProximaAula([]);
@@ -440,7 +442,8 @@ export default function SalaDoAlunoPage() {
                   {proximaAula.quantidade_alunos > 1 && (
                     <div className="bg-blue-50 rounded-lg px-3 py-2 mt-2">
                       <p className="text-xs text-blue-700 font-medium">
-                        Aula em grupo ({proximaAula.quantidade_alunos} alunos)
+                        Aula em grupo ({proximaAula.quantidade_alunos}{" "}
+                        aluno(a)s)
                       </p>
                       {colegasProximaAula.length > 0 && (
                         <p className="text-xs text-blue-600 mt-0.5">
@@ -450,7 +453,7 @@ export default function SalaDoAlunoPage() {
                     </div>
                   )}
                   <p className="text-xs text-gray-400 mt-1">
-                    {LABEL_LOCAL[proximaAula.local || ""] || "—"} ·{" "}
+                    {formatarLocalTexto(proximaAula)} ·{" "}
                     {LABEL_STATUS_AULA[proximaAula.status] ||
                       proximaAula.status}
                   </p>

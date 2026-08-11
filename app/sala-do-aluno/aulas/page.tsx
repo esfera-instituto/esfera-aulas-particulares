@@ -162,28 +162,17 @@ export default function AulasAlunoPage() {
       return;
     }
 
-    const idsGrupo = aulasGrupo.map((a) => a.id);
-    const { data: participantes } = await supabase
-      .from("aula_alunos")
-      .select("aula_id, aluno_id, alunos(nome)")
-      .in("aula_id", idsGrupo);
-
     const mapa: Record<string, string[]> = {};
 
-    aulasGrupo.forEach((a) => {
-      const nomes: string[] = [];
-      if (a.aluno_id && a.aluno_id !== alunoAtualId && a.alunos?.nome) {
-        nomes.push(a.alunos.nome);
-      }
-      mapa[a.id] = nomes;
-    });
-
-    (participantes || []).forEach((p: any) => {
-      if (p.aluno_id !== alunoAtualId && p.alunos?.nome) {
-        if (!mapa[p.aula_id]) mapa[p.aula_id] = [];
-        mapa[p.aula_id].push(p.alunos.nome);
-      }
-    });
+    await Promise.all(
+      aulasGrupo.map(async (a) => {
+        const { data } = await supabase.rpc("nomes_colegas_aula", {
+          p_aula_id: a.id,
+          p_aluno_id: alunoAtualId,
+        });
+        mapa[a.id] = (data || []).map((d: { nome: string }) => d.nome);
+      }),
+    );
 
     setColegasPorAula(mapa);
   }
