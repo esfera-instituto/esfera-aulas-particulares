@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 const NIVEIS = [
   { value: "fundamental_1", label: "Ensino Fundamental I" },
@@ -51,21 +50,11 @@ function formatarMoeda(valor: number) {
 }
 
 export default function InvestimentoPage() {
-  const router = useRouter();
   const [nivel, setNivel] = useState("");
   const [modalidade, setModalidade] = useState("");
 
   const valorHora =
     nivel && modalidade ? VALOR_HORA[modalidade]?.[nivel] || 0 : 0;
-
-  function irParaCadastro(forma: string, horas: number | null = null) {
-    const params = new URLSearchParams();
-    params.set("forma", forma);
-    if (nivel) params.set("nivel", nivel);
-    if (modalidade) params.set("modalidade", modalidade);
-    if (horas) params.set("horas", String(horas));
-    router.push(`/dados-cadastrais?${params.toString()}`);
-  }
 
   const selectClass =
     "w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/50";
@@ -142,22 +131,16 @@ export default function InvestimentoPage() {
 
           {valorHora > 0 && (
             <div className="flex flex-col gap-2">
-              <button
-                onClick={() => irParaCadastro("avulsa")}
-                className="text-left rounded-xl px-4 py-3 border bg-white/5 border-white/10 hover:bg-white/10 transition-all"
-              >
+              <div className="text-left rounded-xl px-4 py-3 border bg-white/5 border-white/10">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-white">Aula pontual</span>
                   <span className="text-sm font-semibold text-white">
                     {formatarMoeda(valorHora)}/h
                   </span>
                 </div>
-              </button>
+              </div>
 
-              <button
-                onClick={() => irParaCadastro("acompanhamento")}
-                className="text-left rounded-xl px-4 py-3 border bg-white/5 border-white/10 hover:bg-white/10 transition-all"
-              >
+              <div className="text-left rounded-xl px-4 py-3 border bg-white/5 border-white/10">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-white">
                     Acompanhamento regular
@@ -172,15 +155,14 @@ export default function InvestimentoPage() {
                 <p className="text-xs text-white/40 mt-0.5">
                   -{DESCONTO_ACOMPANHAMENTO}% · mín. 2h/semana, 2 meses
                 </p>
-              </button>
+              </div>
 
               {TAMANHOS_PACOTE.map((p) => {
                 const valorHoraEfetivo = valorHora * (1 - p.desconto / 100);
                 return (
-                  <button
+                  <div
                     key={p.horas}
-                    onClick={() => irParaCadastro("pacote", p.horas)}
-                    className="text-left rounded-xl px-4 py-3 border bg-white/5 border-white/10 hover:bg-white/10 transition-all"
+                    className="text-left rounded-xl px-4 py-3 border bg-white/5 border-white/10"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-white">
@@ -195,22 +177,12 @@ export default function InvestimentoPage() {
                       {formatarMoeda(valorHoraEfetivo * p.horas)} · validade{" "}
                       {p.validade} dias
                     </p>
-                  </button>
+                  </div>
                 );
               })}
-              <p className="text-xs text-white/40 mt-1">
-                Toque numa opção para iniciar sua solicitação de interesse.
-              </p>
             </div>
           )}
         </div>
-
-        <a
-          href="/dados-cadastrais"
-          className="block text-center w-full bg-white/10 hover:bg-white/20 border border-white/20 text-white text-sm font-medium py-3 rounded-lg transition-all mb-6"
-        >
-          Já sei o que quero — preencher meus dados
-        </a>
 
         <div className="rounded-2xl px-5 py-4 bg-white/5 border border-white/10 mb-4">
           <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-3">

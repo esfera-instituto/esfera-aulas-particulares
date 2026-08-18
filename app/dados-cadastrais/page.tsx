@@ -517,13 +517,7 @@ function DadosCadastraisConteudo() {
         </div>
 
         <div className="rounded-2xl px-5 py-5 bg-white/10 border border-white/10 mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <a
-              href="/investimento"
-              className="text-xs text-white/50 hover:text-white/80"
-            >
-              ← voltar à simulação
-            </a>
+          <div className="flex items-center justify-end mb-4">
             <span className="text-xs text-white/40">
               {ETAPAS[etapa]} ({etapa + 1}/{ETAPAS.length})
             </span>
