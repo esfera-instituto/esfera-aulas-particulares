@@ -236,6 +236,7 @@ export default function SalaDoAlunoPage() {
       .from("cobrancas")
       .select("id, data_inicio, data_fim, valor_total, status, criado_em")
       .eq("aluno_id", alunoId)
+      .neq("status", "cancelada")
       .order("criado_em", { ascending: false })
       .limit(10);
     setCobrancas((cobs as Cobranca[]) || []);
