@@ -282,7 +282,15 @@ export default function AulasAlunoPage() {
         )}
         <p className="text-xs text-gray-400 mt-1">
           {formatarLocalTexto(aula)} ·{" "}
-          {LABEL_STATUS[aula.status] || aula.status}
+          <span
+            className={
+              aula.status === "cancelada"
+                ? "text-red-600 font-semibold"
+                : undefined
+            }
+          >
+            {LABEL_STATUS[aula.status] || aula.status}
+          </span>
           {aula.duracao_minutos_real &&
             ` · ${formatarDuracao(aula.duracao_minutos_real)}`}
         </p>
