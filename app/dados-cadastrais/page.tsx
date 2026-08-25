@@ -202,7 +202,9 @@ type SimNao = "sim" | "nao" | "";
 
 function DadosCadastraisConteudo() {
   const searchParams = useSearchParams();
-  const formaContratacao = searchParams.get("forma") || "";
+  const formaContratacaoBruta = searchParams.get("forma") || "";
+  const formaContratacao =
+    formaContratacaoBruta === "acompanhamento" ? "" : formaContratacaoBruta;
   const horasParam = searchParams.get("horas");
   const pacoteHoras = horasParam ? Number(horasParam) : null;
 

@@ -6,8 +6,8 @@ export const metadata: Metadata = {
 };
 
 const TARIFAS: Record<string, Record<string, number>> = {
-  online: { fundamental_1: 60, fundamental_2: 65, medio: 70, superior: 85 },
-  presencial: { fundamental_1: 70, fundamental_2: 75, medio: 85, superior: 90 },
+  online: { fundamental_1: 70, fundamental_2: 70, medio: 70, superior: 85 },
+  presencial: { fundamental_1: 85, fundamental_2: 85, medio: 85, superior: 90 },
 };
 
 const NIVEIS = [
