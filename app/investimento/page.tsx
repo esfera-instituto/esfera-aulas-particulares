@@ -16,22 +16,20 @@ const MODALIDADES = [
 ];
 
 const VALOR_HORA: Record<string, Record<string, number>> = {
-  online: { fundamental_1: 150, fundamental_2: 160, medio: 170, superior: 200 },
+  online: { fundamental_1: 170, fundamental_2: 170, medio: 170, superior: 200 },
   espaco_esfera: {
-    fundamental_1: 170,
-    fundamental_2: 180,
+    fundamental_1: 200,
+    fundamental_2: 200,
     medio: 200,
     superior: 220,
   },
   domicilio: {
-    fundamental_1: 200,
-    fundamental_2: 210,
+    fundamental_1: 220,
+    fundamental_2: 220,
     medio: 220,
     superior: 250,
   },
 };
-
-const DESCONTO_ACOMPANHAMENTO = 5;
 
 const TAMANHOS_PACOTE = [
   { horas: 6, desconto: 3, validade: 45 },
@@ -140,23 +138,6 @@ export default function InvestimentoPage() {
                 </div>
               </div>
 
-              <div className="text-left rounded-xl px-4 py-3 border bg-white/5 border-white/10">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-white">
-                    Acompanhamento regular
-                  </span>
-                  <span className="text-sm font-semibold text-white">
-                    {formatarMoeda(
-                      valorHora * (1 - DESCONTO_ACOMPANHAMENTO / 100),
-                    )}
-                    /h
-                  </span>
-                </div>
-                <p className="text-xs text-white/40 mt-0.5">
-                  -{DESCONTO_ACOMPANHAMENTO}% · mín. 2h/semana, 2 meses
-                </p>
-              </div>
-
               {TAMANHOS_PACOTE.map((p) => {
                 const valorHoraEfetivo = valorHora * (1 - p.desconto / 100);
                 return (
@@ -206,7 +187,7 @@ export default function InvestimentoPage() {
             Regras dos descontos
           </p>
           <p className="text-sm text-white/70 leading-relaxed">
-            Os descontos de pacote, acompanhamento, aulas em grupo e condições
+            Os descontos de pacote, aulas em grupo e condições
             promocionais não são cumulativos. Quando houver mais de uma condição
             aplicável, prevalecerá o maior desconto.
           </p>
