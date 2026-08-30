@@ -139,6 +139,10 @@ function formatarMoedaAluno(v: number) {
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
+function formatarNumeroPtBrAluno(v: number, casas = 1) {
+  return v.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: casas });
+}
+
 function primeiroDiaMesAluno() {
   const hoje = new Date();
   return new Date(hoje.getFullYear(), hoje.getMonth(), 1).toISOString().slice(0, 10);
@@ -267,7 +271,7 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
   const valorAPagar = useMemo(() => {
     const aCobrar = aulas
       .filter((a) => a.forma_cobranca !== "pacote" && valorRealPorAula[a.id] === undefined)
-      .reduce((s, a) => s + valorClienteAula(a), 0);
+      .reduce((s, a) => s + Number(valorClienteAula(a).toFixed(2)), 0);
     const cobradoPendente = cobrancasAluno
       .filter((c) => c.status === "pendente")
       .reduce((s, c) => s + Number(c.valor_total), 0);
@@ -406,7 +410,7 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-4">
             <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
               <p className="text-xs text-gray-400 uppercase tracking-wide">Aulas realizadas</p>
-              <p className="text-2xl font-bold text-[#08364E] mt-1">{horasTotais.toFixed(1)}h</p>
+              <p className="text-2xl font-bold text-[#08364E] mt-1">{formatarNumeroPtBrAluno(horasTotais)}h</p>
             </div>
             <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
               <p className="text-xs text-gray-400 uppercase tracking-wide">Gasto estimado</p>
@@ -433,9 +437,9 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
                 <ResponsiveContainer width="100%" height={Math.max(180, horasPorDisciplina.length * 32)}>
                   <BarChart data={horasPorDisciplina} layout="vertical" margin={{ left: 10 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
-                    <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={(v) => `${v}h`} />
+                    <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={(v) => `${formatarNumeroPtBrAluno(v)}h`} />
                     <YAxis type="category" dataKey="nome" tick={{ fontSize: 11 }} width={100} />
-                    <Tooltip formatter={(v) => `${v}h`} />
+                    <Tooltip formatter={(v) => `${formatarNumeroPtBrAluno(Number(v))}h`} />
                     <Bar dataKey="horas" fill={CORES_ALUNO.horas} radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -452,9 +456,9 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
                 <ResponsiveContainer width="100%" height={Math.max(180, horasPorProfessor.length * 32)}>
                   <BarChart data={horasPorProfessor} layout="vertical" margin={{ left: 10 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
-                    <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={(v) => `${v}h`} />
+                    <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={(v) => `${formatarNumeroPtBrAluno(v)}h`} />
                     <YAxis type="category" dataKey="nome" tick={{ fontSize: 11 }} width={100} />
-                    <Tooltip formatter={(v) => `${v}h`} />
+                    <Tooltip formatter={(v) => `${formatarNumeroPtBrAluno(Number(v))}h`} />
                     <Bar dataKey="horas" fill={CORES_ALUNO.gasto} radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -470,7 +474,7 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
               {comparativoPacoteAvulsa.map((c) => (
                 <div key={c.tipo} className="bg-gray-50 rounded-lg p-4">
                   <p className="text-sm font-medium text-gray-700">{c.tipo}</p>
-                  <p className="text-xs text-gray-500 mt-1">{c.horas}h · {formatarMoedaAluno(c.gasto)}</p>
+                  <p className="text-xs text-gray-500 mt-1">{formatarNumeroPtBrAluno(c.horas)}h · {formatarMoedaAluno(c.gasto)}</p>
                   <p className="text-xs text-[#08364E] font-semibold mt-1">
                     {formatarMoedaAluno(c.valorPorHora)}/h em média
                   </p>
@@ -481,7 +485,7 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
               <BarChart data={comparativoPacoteAvulsa}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
                 <XAxis dataKey="tipo" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `R$${v}`} />
+                <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `R$${formatarNumeroPtBrAluno(v, 0)}`} />
                 <Tooltip formatter={(v) => formatarMoedaAluno(Number(v))} />
                 <Bar dataKey="valorPorHora" name="Valor por hora" fill={CORES_ALUNO.real} radius={[4, 4, 0, 0]} />
               </BarChart>
