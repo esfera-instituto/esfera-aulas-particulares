@@ -164,6 +164,7 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
   const [aulas, setAulas] = useState<AulaDashboard[]>([]);
   const [valorRealPorAula, setValorRealPorAula] = useState<Record<string, number>>({});
   const [pacotes, setPacotes] = useState<Pacote[]>([]);
+  const [cobrancasAluno, setCobrancasAluno] = useState<{ valor_total: number; status: string }[]>([]);
   const [carregando, setCarregando] = useState(true);
 
   const [dataInicio, setDataInicio] = useState(primeiroDiaMesAluno());
@@ -228,6 +229,13 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
         .eq("status", "ativo");
       setPacotes((pacotesData as Pacote[]) || []);
 
+      const { data: cobrancasData } = await supabase
+        .from("cobrancas")
+        .select("valor_total, status")
+        .eq("aluno_id", alunoId)
+        .neq("status", "cancelada");
+      setCobrancasAluno(cobrancasData || []);
+
       setCarregando(false);
     }
     carregar();
@@ -255,6 +263,22 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
       return dia >= dataInicio && dia <= dataFim;
     });
   }, [aulas, dataInicio, dataFim]);
+
+  const valorAPagar = useMemo(() => {
+    const aCobrar = aulas
+      .filter((a) => a.forma_cobranca !== "pacote" && valorRealPorAula[a.id] === undefined)
+      .reduce((s, a) => s + valorClienteAula(a), 0);
+    const cobradoPendente = cobrancasAluno
+      .filter((c) => c.status === "pendente")
+      .reduce((s, c) => s + Number(c.valor_total), 0);
+    return aCobrar + cobradoPendente;
+  }, [aulas, valorRealPorAula, cobrancasAluno]);
+
+  const valorPago = useMemo(() => {
+    return cobrancasAluno
+      .filter((c) => c.status === "paga")
+      .reduce((s, c) => s + Number(c.valor_total), 0);
+  }, [cobrancasAluno]);
 
   function gastoRealAula(a: AulaDashboard) {
     if (a.forma_cobranca === "pacote") return valorClienteAula(a);
@@ -345,6 +369,17 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
         <p className="text-sm text-gray-400">Carregando painel...</p>
       ) : (
         <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+              <p className="text-xs text-gray-400 uppercase tracking-wide">Valor a pagar</p>
+              <p className="text-2xl font-bold text-red-600 mt-1">{formatarMoedaAluno(valorAPagar)}</p>
+            </div>
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+              <p className="text-xs text-gray-400 uppercase tracking-wide">Valor pago</p>
+              <p className="text-2xl font-bold text-green-600 mt-1">{formatarMoedaAluno(valorPago)}</p>
+            </div>
+          </div>
+
           {pacotes.length > 0 && (
             <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-4">
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
