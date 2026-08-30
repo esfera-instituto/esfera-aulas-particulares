@@ -367,7 +367,7 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
       { tipo: "Avulsa", ...metricas(avulsa) },
       { tipo: "Pacote", ...metricas(pacote) },
     ];
-  }, [aulasFiltradas, valorRealPorAula]);
+  }, [aulasFiltradas, valorRealPorAula, descontoPorPacote]);
 
   return (
     <div className="mb-8">
