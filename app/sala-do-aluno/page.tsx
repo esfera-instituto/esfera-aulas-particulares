@@ -271,13 +271,14 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
     const cobradoPendente = cobrancasAluno
       .filter((c) => c.status === "pendente")
       .reduce((s, c) => s + Number(c.valor_total), 0);
-    return aCobrar + cobradoPendente;
+    return Number((aCobrar + cobradoPendente).toFixed(2));
   }, [aulas, valorRealPorAula, cobrancasAluno]);
 
   const valorPago = useMemo(() => {
-    return cobrancasAluno
+    const total = cobrancasAluno
       .filter((c) => c.status === "paga")
       .reduce((s, c) => s + Number(c.valor_total), 0);
+    return Number(total.toFixed(2));
   }, [cobrancasAluno]);
 
   function gastoRealAula(a: AulaDashboard) {
