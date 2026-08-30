@@ -268,21 +268,25 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
     });
   }, [aulas, dataInicio, dataFim]);
 
+  function paraCentavos(v: number) {
+    return Math.round(v * 100);
+  }
+
   const valorAPagar = useMemo(() => {
-    const aCobrar = aulas
+    const aCobrarCentavos = aulas
       .filter((a) => a.forma_cobranca !== "pacote" && valorRealPorAula[a.id] === undefined)
-      .reduce((s, a) => s + Number(valorClienteAula(a).toFixed(2)), 0);
-    const cobradoPendente = cobrancasAluno
+      .reduce((s, a) => s + paraCentavos(valorClienteAula(a)), 0);
+    const cobradoPendenteCentavos = cobrancasAluno
       .filter((c) => c.status === "pendente")
-      .reduce((s, c) => s + Number(c.valor_total), 0);
-    return Number((aCobrar + cobradoPendente).toFixed(2));
+      .reduce((s, c) => s + paraCentavos(Number(c.valor_total)), 0);
+    return (aCobrarCentavos + cobradoPendenteCentavos) / 100;
   }, [aulas, valorRealPorAula, cobrancasAluno]);
 
   const valorPago = useMemo(() => {
-    const total = cobrancasAluno
+    const totalCentavos = cobrancasAluno
       .filter((c) => c.status === "paga")
-      .reduce((s, c) => s + Number(c.valor_total), 0);
-    return Number(total.toFixed(2));
+      .reduce((s, c) => s + paraCentavos(Number(c.valor_total)), 0);
+    return totalCentavos / 100;
   }, [cobrancasAluno]);
 
   function gastoRealAula(a: AulaDashboard) {
