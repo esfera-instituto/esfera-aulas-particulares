@@ -119,6 +119,7 @@ type AulaDashboard = AulaPreco & {
   disciplina: string | null;
   status: string;
   forma_cobranca: string | null;
+  pacote_id: string | null;
   professor_id: string | null;
   pagavel_apesar_cancelamento: boolean;
   professores?: { nome: string };
@@ -131,6 +132,7 @@ type Pacote = {
   status: string;
   data_validade: string | null;
   dias_validade: number;
+  desconto_percentual: number;
 };
 
 const CORES_ALUNO = { horas: "#0A4A7A", gasto: "#D97706", real: "#16A34A" };
@@ -168,6 +170,7 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
   const [aulas, setAulas] = useState<AulaDashboard[]>([]);
   const [valorRealPorAula, setValorRealPorAula] = useState<Record<string, number>>({});
   const [pacotes, setPacotes] = useState<Pacote[]>([]);
+  const [descontoPorPacote, setDescontoPorPacote] = useState<Record<string, number>>({});
   const [cobrancasAluno, setCobrancasAluno] = useState<{ valor_total: number; status: string }[]>([]);
   const [carregando, setCarregando] = useState(true);
 
@@ -185,7 +188,7 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
       const idsGrupo = (participacoes || []).map((p) => p.aula_id);
 
       const CAMPOS =
-        "id, data_hora, disciplina, nivel, local, status, duracao_minutos, duracao_minutos_real, quantidade_alunos, forma_cobranca, professor_id, pagavel_apesar_cancelamento, professores(nome)";
+        "id, data_hora, disciplina, nivel, local, status, duracao_minutos, duracao_minutos_real, quantidade_alunos, forma_cobranca, pacote_id, professor_id, pagavel_apesar_cancelamento, professores(nome)";
 
       const { data: principais } = await supabase
         .from("aulas")
@@ -228,10 +231,20 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
 
       const { data: pacotesData } = await supabase
         .from("pacotes_aluno")
-        .select("id, horas_totais, horas_utilizadas, status, data_validade, dias_validade")
+        .select("id, horas_totais, horas_utilizadas, status, data_validade, dias_validade, desconto_percentual")
         .eq("aluno_id", alunoId)
         .eq("status", "ativo");
       setPacotes((pacotesData as Pacote[]) || []);
+
+      const { data: todosPacotesData } = await supabase
+        .from("pacotes_aluno")
+        .select("id, desconto_percentual")
+        .eq("aluno_id", alunoId);
+      const mapaDesconto: Record<string, number> = {};
+      (todosPacotesData || []).forEach((p: any) => {
+        mapaDesconto[p.id] = Number(p.desconto_percentual) || 0;
+      });
+      setDescontoPorPacote(mapaDesconto);
 
       const { data: cobrancasData } = await supabase
         .from("cobrancas")
@@ -295,7 +308,10 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
   }, [cobrancasAluno]);
 
   function gastoRealAula(a: AulaDashboard) {
-    if (a.forma_cobranca === "pacote") return valorClienteAula(a);
+    if (a.forma_cobranca === "pacote") {
+      const desconto = a.pacote_id ? descontoPorPacote[a.pacote_id] || 0 : 0;
+      return valorClienteAula(a) * (1 - desconto / 100);
+    }
     if (valorRealPorAula[a.id] !== undefined) return valorRealPorAula[a.id];
     return valorClienteAula(a);
   }
