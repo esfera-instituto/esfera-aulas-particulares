@@ -2,8 +2,18 @@
 
 export const dynamic = "force-dynamic";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { valorClienteAula, type AulaPreco } from "@/lib/precoUtils";
 
 type AlunoVinculado = { id: string; nome: string };
 
@@ -102,6 +112,350 @@ function formatarLocalTexto(aula: {
 
 const CAMPOS_PROXIMA_AULA =
   "id, data_hora, disciplina, local, status, aluno_id, quantidade_alunos, local_rua, local_numero, local_complemento, local_bairro, local_cidade, local_estado, professores(nome, telefone)";
+
+type AulaDashboard = AulaPreco & {
+  id: string;
+  data_hora: string;
+  disciplina: string | null;
+  status: string;
+  forma_cobranca: string | null;
+  professor_id: string | null;
+  pagavel_apesar_cancelamento: boolean;
+  professores?: { nome: string };
+};
+
+type Pacote = {
+  id: string;
+  horas_totais: number;
+  horas_utilizadas: number;
+  status: string;
+  data_validade: string | null;
+  dias_validade: number;
+};
+
+const CORES_ALUNO = { horas: "#0A4A7A", gasto: "#D97706", real: "#16A34A" };
+
+function formatarMoedaAluno(v: number) {
+  return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+function primeiroDiaMesAluno() {
+  const hoje = new Date();
+  return new Date(hoje.getFullYear(), hoje.getMonth(), 1).toISOString().slice(0, 10);
+}
+
+function ultimoDiaMesAluno() {
+  const hoje = new Date();
+  return new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).toISOString().slice(0, 10);
+}
+
+function aulaValidaAluno(a: AulaDashboard) {
+  return a.status === "realizada" || a.status === "paga" || a.pagavel_apesar_cancelamento;
+}
+
+const LABEL_NIVEL_DASH: Record<string, string> = {
+  fundamental_1: "Ensino Fundamental I",
+  fundamental_2: "Ensino Fundamental II",
+  medio: "Ensino Médio",
+  superior: "Ensino Superior",
+};
+
+function PainelAluno({ alunoId }: { alunoId: string }) {
+  const [aulas, setAulas] = useState<AulaDashboard[]>([]);
+  const [valorRealPorAula, setValorRealPorAula] = useState<Record<string, number>>({});
+  const [pacotes, setPacotes] = useState<Pacote[]>([]);
+  const [carregando, setCarregando] = useState(true);
+
+  const [dataInicio, setDataInicio] = useState(primeiroDiaMesAluno());
+  const [dataFim, setDataFim] = useState(ultimoDiaMesAluno());
+
+  useEffect(() => {
+    async function carregar() {
+      setCarregando(true);
+
+      const { data: participacoes } = await supabase
+        .from("aula_alunos")
+        .select("aula_id")
+        .eq("aluno_id", alunoId);
+      const idsGrupo = (participacoes || []).map((p) => p.aula_id);
+
+      const CAMPOS =
+        "id, data_hora, disciplina, nivel, local, status, duracao_minutos, duracao_minutos_real, quantidade_alunos, forma_cobranca, professor_id, pagavel_apesar_cancelamento, professores(nome)";
+
+      const { data: principais } = await supabase
+        .from("aulas")
+        .select(CAMPOS)
+        .eq("aluno_id", alunoId)
+        .in("status", ["realizada", "paga", "cancelada"]);
+
+      let grupoData: any[] = [];
+      if (idsGrupo.length > 0) {
+        const { data } = await supabase
+          .from("aulas")
+          .select(CAMPOS)
+          .in("id", idsGrupo)
+          .in("status", ["realizada", "paga", "cancelada"]);
+        grupoData = data || [];
+      }
+
+      const todas = [...((principais as any[]) || []), ...grupoData];
+      const unicas = Array.from(new Map(todas.map((a) => [a.id, a])).values()) as AulaDashboard[];
+      const validas = unicas.filter(aulaValidaAluno);
+      setAulas(validas);
+
+      const idsAulas = validas.map((a) => a.id);
+      if (idsAulas.length > 0) {
+        const { data: cobradas } = await supabase
+          .from("cobranca_aulas")
+          .select("aula_id, valor_aula, cobrancas(status)")
+          .eq("aluno_id", alunoId)
+          .in("aula_id", idsAulas);
+
+        const mapa: Record<string, number> = {};
+        (cobradas || []).forEach((c: any) => {
+          if (c.cobrancas?.status === "cancelada") return;
+          mapa[c.aula_id] = Number(c.valor_aula);
+        });
+        setValorRealPorAula(mapa);
+      } else {
+        setValorRealPorAula({});
+      }
+
+      const { data: pacotesData } = await supabase
+        .from("pacotes_aluno")
+        .select("id, horas_totais, horas_utilizadas, status, data_validade, dias_validade")
+        .eq("aluno_id", alunoId)
+        .eq("status", "ativo");
+      setPacotes((pacotesData as Pacote[]) || []);
+
+      setCarregando(false);
+    }
+    carregar();
+  }, [alunoId]);
+
+  function aplicarPreset(preset: "mesAtual" | "mesPassado" | "anoAtual") {
+    const hoje = new Date();
+    if (preset === "mesAtual") {
+      setDataInicio(primeiroDiaMesAluno());
+      setDataFim(ultimoDiaMesAluno());
+    } else if (preset === "mesPassado") {
+      const inicio = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
+      const fim = new Date(hoje.getFullYear(), hoje.getMonth(), 0);
+      setDataInicio(inicio.toISOString().slice(0, 10));
+      setDataFim(fim.toISOString().slice(0, 10));
+    } else {
+      setDataInicio(`${hoje.getFullYear()}-01-01`);
+      setDataFim(`${hoje.getFullYear()}-12-31`);
+    }
+  }
+
+  const aulasFiltradas = useMemo(() => {
+    return aulas.filter((a) => {
+      const dia = a.data_hora.slice(0, 10);
+      return dia >= dataInicio && dia <= dataFim;
+    });
+  }, [aulas, dataInicio, dataFim]);
+
+  function gastoRealAula(a: AulaDashboard) {
+    if (a.forma_cobranca === "pacote") return valorClienteAula(a);
+    if (valorRealPorAula[a.id] !== undefined) return valorRealPorAula[a.id];
+    return valorClienteAula(a);
+  }
+
+  const horasTotais = aulasFiltradas.reduce(
+    (s, a) => s + (a.duracao_minutos_real ?? a.duracao_minutos) / 60,
+    0,
+  );
+  const gastoEstimado = aulasFiltradas.reduce((s, a) => s + valorClienteAula(a), 0);
+  const gastoReal = aulasFiltradas.reduce((s, a) => s + gastoRealAula(a), 0);
+  const diferenca = gastoEstimado - gastoReal;
+
+  const horasPorDisciplina = useMemo(() => {
+    const mapa: Record<string, number> = {};
+    aulasFiltradas.forEach((a) => {
+      const chave = a.disciplina || LABEL_NIVEL_DASH[a.nivel] || "—";
+      mapa[chave] = (mapa[chave] || 0) + (a.duracao_minutos_real ?? a.duracao_minutos) / 60;
+    });
+    return Object.entries(mapa)
+      .map(([nome, horas]) => ({ nome, horas: Number(horas.toFixed(1)) }))
+      .sort((a, b) => b.horas - a.horas)
+      .slice(0, 8);
+  }, [aulasFiltradas]);
+
+  const horasPorProfessor = useMemo(() => {
+    const mapa: Record<string, number> = {};
+    aulasFiltradas.forEach((a) => {
+      const chave = a.professores?.nome || "—";
+      mapa[chave] = (mapa[chave] || 0) + (a.duracao_minutos_real ?? a.duracao_minutos) / 60;
+    });
+    return Object.entries(mapa)
+      .map(([nome, horas]) => ({ nome, horas: Number(horas.toFixed(1)) }))
+      .sort((a, b) => b.horas - a.horas)
+      .slice(0, 8);
+  }, [aulasFiltradas]);
+
+  const comparativoPacoteAvulsa = useMemo(() => {
+    const pacote = aulasFiltradas.filter((a) => a.forma_cobranca === "pacote");
+    const avulsa = aulasFiltradas.filter((a) => a.forma_cobranca !== "pacote");
+
+    function metricas(lista: AulaDashboard[]) {
+      const horas = lista.reduce((s, a) => s + (a.duracao_minutos_real ?? a.duracao_minutos) / 60, 0);
+      const gasto = lista.reduce((s, a) => s + gastoRealAula(a), 0);
+      const valorPorHora = horas > 0 ? gasto / horas : 0;
+      return {
+        horas: Number(horas.toFixed(1)),
+        gasto: Number(gasto.toFixed(2)),
+        valorPorHora: Number(valorPorHora.toFixed(2)),
+      };
+    }
+
+    return [
+      { tipo: "Avulsa", ...metricas(avulsa) },
+      { tipo: "Pacote", ...metricas(pacote) },
+    ];
+  }, [aulasFiltradas, valorRealPorAula]);
+
+  return (
+    <div className="mb-8">
+      <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-4 flex items-end gap-3 flex-wrap">
+        <div className="flex gap-2">
+          <button onClick={() => aplicarPreset("mesAtual")} className="text-xs px-3 py-2 rounded-lg border border-gray-200 hover:border-[#08364E] text-gray-600">
+            Este mês
+          </button>
+          <button onClick={() => aplicarPreset("mesPassado")} className="text-xs px-3 py-2 rounded-lg border border-gray-200 hover:border-[#08364E] text-gray-600">
+            Mês passado
+          </button>
+          <button onClick={() => aplicarPreset("anoAtual")} className="text-xs px-3 py-2 rounded-lg border border-gray-200 hover:border-[#08364E] text-gray-600">
+            Este ano
+          </button>
+        </div>
+        <div className="flex items-end gap-2">
+          <div>
+            <label className="text-[10px] text-gray-400 block">De</label>
+            <input type="date" value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs" />
+          </div>
+          <div>
+            <label className="text-[10px] text-gray-400 block">Até</label>
+            <input type="date" value={dataFim} onChange={(e) => setDataFim(e.target.value)} className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs" />
+          </div>
+        </div>
+      </div>
+
+      {carregando ? (
+        <p className="text-sm text-gray-400">Carregando painel...</p>
+      ) : (
+        <>
+          {pacotes.length > 0 && (
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-4">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                Saldo de pacotes ativos
+              </h3>
+              <div className="flex flex-col gap-2">
+                {pacotes.map((p) => (
+                  <div key={p.id} className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
+                    <span className="text-sm text-gray-700">
+                      {p.horas_totais - p.horas_utilizadas}h restantes de {p.horas_totais}h
+                    </span>
+                    {p.data_validade && (
+                      <span className="text-xs text-gray-400">
+                        válido até {new Date(p.data_validade + "T00:00:00").toLocaleDateString("pt-BR")}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-4">
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+              <p className="text-xs text-gray-400 uppercase tracking-wide">Horas tidas</p>
+              <p className="text-2xl font-bold text-[#08364E] mt-1">{horasTotais.toFixed(1)}h</p>
+            </div>
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+              <p className="text-xs text-gray-400 uppercase tracking-wide">Gasto estimado</p>
+              <p className="text-xl font-bold text-gray-500 mt-1">{formatarMoedaAluno(gastoEstimado)}</p>
+            </div>
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+              <p className="text-xs text-gray-400 uppercase tracking-wide">Gasto real</p>
+              <p className="text-xl font-bold text-[#0A4A7A] mt-1">{formatarMoedaAluno(gastoReal)}</p>
+            </div>
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+              <p className="text-xs text-gray-400 uppercase tracking-wide">Desconto obtido</p>
+              <p className="text-xl font-bold text-green-600 mt-1">{formatarMoedaAluno(diferenca)}</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                Horas por disciplina
+              </h3>
+              {horasPorDisciplina.length === 0 ? (
+                <p className="text-sm text-gray-400 text-center py-6">Sem dados no período.</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={Math.max(180, horasPorDisciplina.length * 32)}>
+                  <BarChart data={horasPorDisciplina} layout="vertical" margin={{ left: 10 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                    <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={(v) => `${v}h`} />
+                    <YAxis type="category" dataKey="nome" tick={{ fontSize: 11 }} width={100} />
+                    <Tooltip formatter={(v) => `${v}h`} />
+                    <Bar dataKey="horas" fill={CORES_ALUNO.horas} radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                Horas por professor(a)
+              </h3>
+              {horasPorProfessor.length === 0 ? (
+                <p className="text-sm text-gray-400 text-center py-6">Sem dados no período.</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={Math.max(180, horasPorProfessor.length * 32)}>
+                  <BarChart data={horasPorProfessor} layout="vertical" margin={{ left: 10 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                    <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={(v) => `${v}h`} />
+                    <YAxis type="category" dataKey="nome" tick={{ fontSize: 11 }} width={100} />
+                    <Tooltip formatter={(v) => `${v}h`} />
+                    <Bar dataKey="horas" fill={CORES_ALUNO.gasto} radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+              Aula avulsa vs. Pacote
+            </h3>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              {comparativoPacoteAvulsa.map((c) => (
+                <div key={c.tipo} className="bg-gray-50 rounded-lg p-4">
+                  <p className="text-sm font-medium text-gray-700">{c.tipo}</p>
+                  <p className="text-xs text-gray-500 mt-1">{c.horas}h · {formatarMoedaAluno(c.gasto)}</p>
+                  <p className="text-xs text-[#08364E] font-semibold mt-1">
+                    {formatarMoedaAluno(c.valorPorHora)}/h em média
+                  </p>
+                </div>
+              ))}
+            </div>
+            <ResponsiveContainer width="100%" height={180}>
+              <BarChart data={comparativoPacoteAvulsa}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                <XAxis dataKey="tipo" tick={{ fontSize: 11 }} />
+                <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `R$${v}`} />
+                <Tooltip formatter={(v) => formatarMoedaAluno(Number(v))} />
+                <Bar dataKey="valorPorHora" name="Valor por hora" fill={CORES_ALUNO.real} radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
 
 export default function SalaDoAlunoPage() {
   const [carregandoSessao, setCarregandoSessao] = useState(true);
@@ -421,6 +775,8 @@ export default function SalaDoAlunoPage() {
         <h1 className="text-2xl font-semibold text-gray-800 mb-6">
           Olá, {alunoAtivo?.nome || "aluno(a)"}!
         </h1>
+
+        {alunoAtivoId && <PainelAluno alunoId={alunoAtivoId} />}
 
         {carregandoConteudo ? (
           <p className="text-sm text-gray-400">Carregando...</p>
