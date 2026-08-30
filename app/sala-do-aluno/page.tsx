@@ -369,7 +369,7 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
 
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-4">
             <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-              <p className="text-xs text-gray-400 uppercase tracking-wide">Horas tidas</p>
+              <p className="text-xs text-gray-400 uppercase tracking-wide">Aulas realizadas</p>
               <p className="text-2xl font-bold text-[#08364E] mt-1">{horasTotais.toFixed(1)}h</p>
             </div>
             <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
