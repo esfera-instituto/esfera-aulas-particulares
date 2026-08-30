@@ -272,6 +272,11 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
     return Math.round(v * 100);
   }
 
+  function somarEmReaisLocal(valores: number[]) {
+    const totalCentavos = valores.reduce((s, v) => s + paraCentavos(v), 0);
+    return totalCentavos / 100;
+  }
+
   const valorAPagar = useMemo(() => {
     const aCobrarCentavos = aulas
       .filter((a) => a.forma_cobranca !== "pacote" && valorRealPorAula[a.id] === undefined)
@@ -299,9 +304,9 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
     (s, a) => s + (a.duracao_minutos_real ?? a.duracao_minutos) / 60,
     0,
   );
-  const gastoEstimado = aulasFiltradas.reduce((s, a) => s + valorClienteAula(a), 0);
-  const gastoReal = aulasFiltradas.reduce((s, a) => s + gastoRealAula(a), 0);
-  const diferenca = gastoEstimado - gastoReal;
+  const gastoEstimado = somarEmReaisLocal(aulasFiltradas.map((a) => valorClienteAula(a)));
+  const gastoReal = somarEmReaisLocal(aulasFiltradas.map((a) => gastoRealAula(a)));
+  const diferenca = Number((gastoEstimado - gastoReal).toFixed(2));
 
   const horasPorDisciplina = useMemo(() => {
     const mapa: Record<string, number> = {};
@@ -333,7 +338,7 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
 
     function metricas(lista: AulaDashboard[]) {
       const horas = lista.reduce((s, a) => s + (a.duracao_minutos_real ?? a.duracao_minutos) / 60, 0);
-      const gasto = lista.reduce((s, a) => s + gastoRealAula(a), 0);
+      const gasto = somarEmReaisLocal(lista.map((a) => gastoRealAula(a)));
       const valorPorHora = horas > 0 ? gasto / horas : 0;
       return {
         horas: Number(horas.toFixed(1)),
