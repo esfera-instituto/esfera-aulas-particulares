@@ -34,7 +34,14 @@ const VALOR_HORA: Record<string, Record<string, number>> = {
 const TAMANHOS_PACOTE = [
   { horas: 6, desconto: 3, validade: 45 },
   { horas: 10, desconto: 5, validade: 60 },
-  { horas: 20, desconto: 8, validade: 90 },
+  { horas: 20, desconto: 10, validade: 180 },
+];
+
+const OPCOES_QUANTIDADE = [
+  { valor: 1, label: "1 aluno(a) — individual" },
+  { valor: 2, label: "2 alunos" },
+  { valor: 3, label: "3 alunos" },
+  { valor: 4, label: "4 ou mais alunos" },
 ];
 
 const descontosGrupo = [
@@ -43,6 +50,22 @@ const descontosGrupo = [
   { qtd: "4 ou mais alunos", desconto: "15%" },
 ];
 
+// Desconto de aula avulsa quando em grupo (aplicado ao preço da hora)
+function descontoGrupoAvulsa(quantidadeAlunos: number) {
+  if (quantidadeAlunos <= 1) return 0;
+  if (quantidadeAlunos === 2) return 5;
+  if (quantidadeAlunos === 3) return 10;
+  return 15;
+}
+
+// Desconto de pacote quando comprado em grupo — substitui o desconto por tamanho
+function descontoGrupoPacote(quantidadeAlunos: number) {
+  if (quantidadeAlunos <= 1) return 0;
+  if (quantidadeAlunos === 2) return 25;
+  if (quantidadeAlunos === 3) return 30;
+  return 35;
+}
+
 function formatarMoeda(valor: number) {
   return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
@@ -50,9 +73,15 @@ function formatarMoeda(valor: number) {
 export default function InvestimentoPage() {
   const [nivel, setNivel] = useState("");
   const [modalidade, setModalidade] = useState("");
+  const [quantidadeAlunos, setQuantidadeAlunos] = useState(1);
 
   const valorHora =
     nivel && modalidade ? VALOR_HORA[modalidade]?.[nivel] || 0 : 0;
+
+  const emGrupo = quantidadeAlunos > 1;
+  const descontoAvulsaAtual = descontoGrupoAvulsa(quantidadeAlunos);
+  const descontoPacoteAtual = descontoGrupoPacote(quantidadeAlunos);
+  const valorHoraAvulsaComGrupo = valorHora * (1 - descontoAvulsaAtual / 100);
 
   const selectClass =
     "w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/50";
@@ -125,49 +154,93 @@ export default function InvestimentoPage() {
                 </option>
               ))}
             </select>
+            <select
+              value={quantidadeAlunos}
+              onChange={(e) => setQuantidadeAlunos(Number(e.target.value))}
+              className={selectClass}
+            >
+              {OPCOES_QUANTIDADE.map((o) => (
+                <option key={o.valor} value={o.valor} className="text-gray-800">
+                  {o.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           {valorHora > 0 && (
             <div className="flex flex-col gap-2">
               <div className="text-left rounded-xl px-4 py-3 border bg-white/5 border-white/10">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-white">Aula pontual</span>
+                  <span className="text-sm text-white">
+                    Aula pontual{emGrupo ? " (grupo)" : ""}
+                  </span>
                   <span className="text-sm font-semibold text-white">
-                    {formatarMoeda(valorHora)}/h
+                    {formatarMoeda(valorHoraAvulsaComGrupo)}/h
                   </span>
                 </div>
+                {emGrupo && (
+                  <p className="text-xs text-white/40 mt-0.5">
+                    -{descontoAvulsaAtual}% por aula em grupo (por aluno)
+                  </p>
+                )}
               </div>
 
-              {TAMANHOS_PACOTE.map((p) => {
-                const valorHoraEfetivo = valorHora * (1 - p.desconto / 100);
-                return (
-                  <div
-                    key={p.horas}
-                    className="text-left rounded-xl px-4 py-3 border bg-white/5 border-white/10"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-white">
-                        Pacote de {p.horas}h
-                      </span>
-                      <span className="text-sm font-semibold text-white">
-                        {formatarMoeda(valorHoraEfetivo)}/h
-                      </span>
+              {!emGrupo &&
+                TAMANHOS_PACOTE.map((p) => {
+                  const valorHoraEfetivo = valorHora * (1 - p.desconto / 100);
+                  return (
+                    <div
+                      key={p.horas}
+                      className="text-left rounded-xl px-4 py-3 border bg-white/5 border-white/10"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-white">
+                          Pacote de {p.horas}h
+                        </span>
+                        <span className="text-sm font-semibold text-white">
+                          {formatarMoeda(valorHoraEfetivo)}/h
+                        </span>
+                      </div>
+                      <p className="text-xs text-white/40 mt-0.5">
+                        -{p.desconto}% · total{" "}
+                        {formatarMoeda(valorHoraEfetivo * p.horas)} · validade{" "}
+                        {p.validade} dias
+                      </p>
                     </div>
-                    <p className="text-xs text-white/40 mt-0.5">
-                      -{p.desconto}% · total{" "}
-                      {formatarMoeda(valorHoraEfetivo * p.horas)} · validade{" "}
-                      {p.validade} dias
-                    </p>
-                  </div>
-                );
-              })}
+                  );
+                })}
+
+              {emGrupo &&
+                TAMANHOS_PACOTE.map((p) => {
+                  const valorHoraEfetivo = valorHora * (1 - descontoPacoteAtual / 100);
+                  return (
+                    <div
+                      key={p.horas}
+                      className="text-left rounded-xl px-4 py-3 border bg-white/5 border-white/10"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-white">
+                          Pacote de {p.horas}h (grupo)
+                        </span>
+                        <span className="text-sm font-semibold text-white">
+                          {formatarMoeda(valorHoraEfetivo)}/h
+                        </span>
+                      </div>
+                      <p className="text-xs text-white/40 mt-0.5">
+                        -{descontoPacoteAtual}% por aluno · total (por aluno){" "}
+                        {formatarMoeda(valorHoraEfetivo * p.horas)} · validade{" "}
+                        {p.validade} dias
+                      </p>
+                    </div>
+                  );
+                })}
             </div>
           )}
         </div>
 
         <div className="rounded-2xl px-5 py-4 bg-white/5 border border-white/10 mb-4">
           <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-3">
-            Desconto para aulas em grupo
+            Desconto para aulas pontuais em grupo
           </p>
           <div className="flex flex-col gap-2">
             {descontosGrupo.map((d) => (
@@ -180,6 +253,29 @@ export default function InvestimentoPage() {
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="rounded-2xl px-5 py-4 bg-white/5 border border-white/10 mb-4">
+          <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-3">
+            Desconto para pacotes em grupo
+          </p>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-white/70">2 alunos</span>
+              <span className="text-white font-medium">-25%</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-white/70">3 alunos</span>
+              <span className="text-white font-medium">-30%</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-white/70">4 ou mais alunos</span>
+              <span className="text-white font-medium">-35%</span>
+            </div>
+          </div>
+          <p className="text-xs text-white/40 mt-3 leading-relaxed">
+            Cada aluno do grupo tem seu próprio pacote de horas, comprados juntos.
+          </p>
         </div>
 
         <div className="rounded-2xl px-5 py-4 bg-white/5 border border-white/10 mb-4">
