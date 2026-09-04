@@ -6,9 +6,9 @@ export const VALOR_HORA: Record<string, Record<string, number>> = {
 
 export function descontoGrupoPercentual(quantidadeAlunos: number) {
   if (quantidadeAlunos <= 1) return 0;
-  if (quantidadeAlunos === 2) return 0.05;
-  if (quantidadeAlunos === 3) return 0.1;
-  return 0.15;
+  if (quantidadeAlunos === 2) return 0.25;
+  if (quantidadeAlunos === 3) return 0.3;
+  return 0.35;
 }
 
 export type AulaPreco = {
