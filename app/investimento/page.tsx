@@ -44,22 +44,8 @@ const OPCOES_QUANTIDADE = [
   { valor: 4, label: "4 ou mais alunos" },
 ];
 
-const descontosGrupo = [
-  { qtd: "2 alunos", desconto: "5%" },
-  { qtd: "3 alunos", desconto: "10%" },
-  { qtd: "4 ou mais alunos", desconto: "15%" },
-];
-
-// Desconto de aula avulsa quando em grupo (aplicado ao preço da hora)
-function descontoGrupoAvulsa(quantidadeAlunos: number) {
-  if (quantidadeAlunos <= 1) return 0;
-  if (quantidadeAlunos === 2) return 5;
-  if (quantidadeAlunos === 3) return 10;
-  return 15;
-}
-
-// Desconto de pacote quando comprado em grupo — substitui o desconto por tamanho
-function descontoGrupoPacote(quantidadeAlunos: number) {
+// Desconto de grupo — vale igual para aula avulsa e para pacote
+function descontoGrupo(quantidadeAlunos: number) {
   if (quantidadeAlunos <= 1) return 0;
   if (quantidadeAlunos === 2) return 25;
   if (quantidadeAlunos === 3) return 30;
@@ -79,9 +65,8 @@ export default function InvestimentoPage() {
     nivel && modalidade ? VALOR_HORA[modalidade]?.[nivel] || 0 : 0;
 
   const emGrupo = quantidadeAlunos > 1;
-  const descontoAvulsaAtual = descontoGrupoAvulsa(quantidadeAlunos);
-  const descontoPacoteAtual = descontoGrupoPacote(quantidadeAlunos);
-  const valorHoraAvulsaComGrupo = valorHora * (1 - descontoAvulsaAtual / 100);
+  const descontoAtual = descontoGrupo(quantidadeAlunos);
+  const valorHoraAvulsaComGrupo = valorHora * (1 - descontoAtual / 100);
 
   const selectClass =
     "w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/50";
@@ -180,7 +165,7 @@ export default function InvestimentoPage() {
                 </div>
                 {emGrupo && (
                   <p className="text-xs text-white/40 mt-0.5">
-                    -{descontoAvulsaAtual}% por aula em grupo (por aluno)
+                    -{descontoAtual}% por aula em grupo (por aluno)
                   </p>
                 )}
               </div>
@@ -212,7 +197,7 @@ export default function InvestimentoPage() {
 
               {emGrupo &&
                 TAMANHOS_PACOTE.map((p) => {
-                  const valorHoraEfetivo = valorHora * (1 - descontoPacoteAtual / 100);
+                  const valorHoraEfetivo = valorHora * (1 - descontoAtual / 100);
                   return (
                     <div
                       key={p.horas}
@@ -227,7 +212,7 @@ export default function InvestimentoPage() {
                         </span>
                       </div>
                       <p className="text-xs text-white/40 mt-0.5">
-                        -{descontoPacoteAtual}% por aluno · total (por aluno){" "}
+                        -{descontoAtual}% por aluno · total (por aluno){" "}
                         {formatarMoeda(valorHoraEfetivo * p.horas)} · validade{" "}
                         {p.validade} dias
                       </p>
@@ -240,24 +225,7 @@ export default function InvestimentoPage() {
 
         <div className="rounded-2xl px-5 py-4 bg-white/5 border border-white/10 mb-4">
           <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-3">
-            Desconto para aulas pontuais em grupo
-          </p>
-          <div className="flex flex-col gap-2">
-            {descontosGrupo.map((d) => (
-              <div
-                key={d.qtd}
-                className="flex items-center justify-between text-sm"
-              >
-                <span className="text-white/70">{d.qtd}</span>
-                <span className="text-white font-medium">-{d.desconto}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-2xl px-5 py-4 bg-white/5 border border-white/10 mb-4">
-          <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-3">
-            Desconto para pacotes em grupo
+            Desconto para aulas em grupo
           </p>
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between text-sm">
@@ -274,7 +242,8 @@ export default function InvestimentoPage() {
             </div>
           </div>
           <p className="text-xs text-white/40 mt-3 leading-relaxed">
-            Cada aluno do grupo tem seu próprio pacote de horas, comprados juntos.
+            Vale para aula pontual ou pacote — em pacote, cada aluno do grupo
+            tem seu próprio pacote de horas, comprados juntos.
           </p>
         </div>
 
