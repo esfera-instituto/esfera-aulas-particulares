@@ -32,9 +32,11 @@ const VALOR_HORA: Record<string, Record<string, number>> = {
 };
 
 const TAMANHOS_PACOTE = [
-  { horas: 6, desconto: 3, validade: 45 },
-  { horas: 10, desconto: 5, validade: 60 },
+  { horas: 4, desconto: 3, validade: 30 },
+  { horas: 6, desconto: 5, validade: 45 },
+  { horas: 10, desconto: 7, validade: 60 },
   { horas: 20, desconto: 10, validade: 180 },
+  { horas: 30, desconto: 12, validade: 180 },
 ];
 
 const OPCOES_QUANTIDADE = [
