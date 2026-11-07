@@ -345,7 +345,7 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
       mapa[chave] = (mapa[chave] || 0) + (a.duracao_minutos_real ?? a.duracao_minutos) / 60;
     });
     return Object.entries(mapa)
-      .map(([nome, horas]) => ({ nome, horas: Number(horas.toFixed(1)) }))
+      .map(([nome, horas]) => ({ nome, horas: Number(horas.toFixed(2)) }))
       .sort((a, b) => b.horas - a.horas)
       .slice(0, 8);
   }, [aulasFiltradas]);
@@ -357,7 +357,7 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
       mapa[chave] = (mapa[chave] || 0) + (a.duracao_minutos_real ?? a.duracao_minutos) / 60;
     });
     return Object.entries(mapa)
-      .map(([nome, horas]) => ({ nome, horas: Number(horas.toFixed(1)) }))
+      .map(([nome, horas]) => ({ nome, horas: Number(horas.toFixed(2)) }))
       .sort((a, b) => b.horas - a.horas)
       .slice(0, 8);
   }, [aulasFiltradas]);
@@ -371,7 +371,7 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
       const gasto = somarEmReaisLocal(lista.map((a) => gastoRealAula(a)));
       const valorPorHora = horas > 0 ? gasto / horas : 0;
       return {
-        horas: Number(horas.toFixed(1)),
+        horas: Number(horas.toFixed(2)),
         gasto: Number(gasto.toFixed(2)),
         valorPorHora: Number(valorPorHora.toFixed(2)),
       };
@@ -387,27 +387,49 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
     <div className="mb-8">
       <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-4 flex items-end gap-3 flex-wrap">
         <div className="flex gap-2 flex-wrap">
-          <button onClick={() => aplicarPreset("mesAtual")} className="text-xs px-3 py-2 rounded-lg border border-gray-200 hover:border-[#08364E] text-gray-600">
+          <button
+            onClick={() => aplicarPreset("mesAtual")}
+            className="text-xs px-3 py-2 rounded-lg border border-gray-200 hover:border-[#08364E] text-gray-600"
+          >
             Este mês
           </button>
-          <button onClick={() => aplicarPreset("mesPassado")} className="text-xs px-3 py-2 rounded-lg border border-gray-200 hover:border-[#08364E] text-gray-600">
+          <button
+            onClick={() => aplicarPreset("mesPassado")}
+            className="text-xs px-3 py-2 rounded-lg border border-gray-200 hover:border-[#08364E] text-gray-600"
+          >
             Mês passado
           </button>
-          <button onClick={() => aplicarPreset("anoAtual")} className="text-xs px-3 py-2 rounded-lg border border-gray-200 hover:border-[#08364E] text-gray-600">
+          <button
+            onClick={() => aplicarPreset("anoAtual")}
+            className="text-xs px-3 py-2 rounded-lg border border-gray-200 hover:border-[#08364E] text-gray-600"
+          >
             Este ano
           </button>
-          <button onClick={() => aplicarPreset("tudo")} className="text-xs px-3 py-2 rounded-lg border border-gray-200 hover:border-[#08364E] text-gray-600">
+          <button
+            onClick={() => aplicarPreset("tudo")}
+            className="text-xs px-3 py-2 rounded-lg border border-gray-200 hover:border-[#08364E] text-gray-600"
+          >
             Todas
           </button>
         </div>
         <div className="flex items-end gap-2">
           <div>
             <label className="text-[10px] text-gray-400 block">De</label>
-            <input type="date" value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs" />
+            <input
+              type="date"
+              value={dataInicio}
+              onChange={(e) => setDataInicio(e.target.value)}
+              className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs"
+            />
           </div>
           <div>
             <label className="text-[10px] text-gray-400 block">Até</label>
-            <input type="date" value={dataFim} onChange={(e) => setDataFim(e.target.value)} className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs" />
+            <input
+              type="date"
+              value={dataFim}
+              onChange={(e) => setDataFim(e.target.value)}
+              className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs"
+            />
           </div>
         </div>
       </div>
@@ -436,7 +458,10 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
                 {pacotes.map((p) => {
                   const saldo = p.horas_totais - p.horas_utilizadas;
                   return (
-                    <div key={p.id} className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
+                    <div
+                      key={p.id}
+                      className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3"
+                    >
                       <span className="text-sm text-gray-700">
                         {formatarHorasDecimais(saldo)} restantes de {p.horas_totais}h
                       </span>
@@ -482,9 +507,20 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
                 <ResponsiveContainer width="100%" height={Math.max(180, horasPorDisciplina.length * 32)}>
                   <BarChart data={horasPorDisciplina} layout="vertical" margin={{ left: 10 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
-                    <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={(v) => `${formatarNumeroPtBr(v)}h`} />
-                    <YAxis type="category" dataKey="nome" tick={{ fontSize: 11 }} width={100} />
-                    <Tooltip formatter={(v) => `${formatarNumeroPtBr(Number(v))}h`} />
+                    <XAxis
+                      type="number"
+                      tick={{ fontSize: 11 }}
+                      tickFormatter={(v) => formatarHorasDecimais(Number(v))}
+                    />
+                    <YAxis
+                      type="category"
+                      dataKey="nome"
+                      tick={{ fontSize: 11 }}
+                      width={100}
+                    />
+                    <Tooltip
+                      formatter={(v) => [formatarHorasDecimais(Number(v)), "Duração"]}
+                    />
                     <Bar dataKey="horas" fill={CORES_ALUNO.horas} radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -501,9 +537,20 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
                 <ResponsiveContainer width="100%" height={Math.max(180, horasPorProfessor.length * 32)}>
                   <BarChart data={horasPorProfessor} layout="vertical" margin={{ left: 10 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
-                    <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={(v) => `${formatarNumeroPtBr(v)}h`} />
-                    <YAxis type="category" dataKey="nome" tick={{ fontSize: 11 }} width={100} />
-                    <Tooltip formatter={(v) => `${formatarNumeroPtBr(Number(v))}h`} />
+                    <XAxis
+                      type="number"
+                      tick={{ fontSize: 11 }}
+                      tickFormatter={(v) => formatarHorasDecimais(Number(v))}
+                    />
+                    <YAxis
+                      type="category"
+                      dataKey="nome"
+                      tick={{ fontSize: 11 }}
+                      width={100}
+                    />
+                    <Tooltip
+                      formatter={(v) => [formatarHorasDecimais(Number(v)), "Duração"]}
+                    />
                     <Bar dataKey="horas" fill={CORES_ALUNO.gasto} radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -519,7 +566,9 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
               {comparativoPacoteAvulsa.map((c) => (
                 <div key={c.tipo} className="bg-gray-50 rounded-lg p-4">
                   <p className="text-sm font-medium text-gray-700">{c.tipo}</p>
-                  <p className="text-xs text-gray-500 mt-1">{formatarHorasDecimais(c.horas)} · {formatarMoeda(c.gasto)}</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {formatarHorasDecimais(c.horas)} · {formatarMoeda(c.gasto)}
+                  </p>
                   <p className="text-xs text-[#08364E] font-semibold mt-1">
                     {formatarMoeda(c.valorPorHora)}/h em média
                   </p>
@@ -530,9 +579,17 @@ function PainelAluno({ alunoId }: { alunoId: string }) {
               <BarChart data={comparativoPacoteAvulsa}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
                 <XAxis dataKey="tipo" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `R$${formatarNumeroPtBr(v, 0)}`} />
+                <YAxis
+                  tick={{ fontSize: 11 }}
+                  tickFormatter={(v) => `R$${formatarNumeroPtBr(v, 0)}`}
+                />
                 <Tooltip formatter={(v) => formatarMoeda(Number(v))} />
-                <Bar dataKey="valorPorHora" name="Valor por hora" fill={CORES_ALUNO.real} radius={[4, 4, 0, 0]} />
+                <Bar
+                  dataKey="valorPorHora"
+                  name="Valor por hora"
+                  fill={CORES_ALUNO.real}
+                  radius={[4, 4, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
