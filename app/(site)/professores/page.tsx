@@ -29,9 +29,14 @@ export default function ProfessoresPage() {
                 {professor.area}
               </p>
 
-              <p className="mt-3 text-sm leading-6 text-slate-600">
-                {professor.descricao}
-              </p>
+              <div className="mt-3 space-y-3 text-sm leading-6 text-slate-600">
+                {professor.descricao
+                  .split("\n\n")
+                  .filter(Boolean)
+                  .map((paragrafo, idx) => (
+                    <p key={idx}>{paragrafo}</p>
+                  ))}
+              </div>
             </div>
           </article>
         ))}
