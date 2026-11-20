@@ -38,4 +38,11 @@ export const professores: Professor[] = [
     imagem: "/professores/felipe.jpg",
     descricao: "É doutor em Ciências Econômicas, na área de Teoria Econômica, pela Universidade Estadual de Campinas (Unicamp). Sua trajetória de pesquisa se concentra em economia política, história econômica e planejamento econômico, com estudos sobre as experiências soviética e chinesa. Possui experiência de apoio à docência no ensino superior, com atuação no Programa de Estágio Docente da Unicamp nas disciplinas História Econômica Geral II e Economia Internacional II. Na sua graduação na Universidade Federal de Uberlândia (UFU), foi monitor de Microeconomia I e ministrou um minicurso de Nivelamento em Matemática. Sua produção acadêmica aborda o planejamento econômico soviético, a perestroika e as transformações da economia chinesa. No doutorado, investigou as reformas econômicas da China entre 1979 e 1992 e a transição para uma economia socialista de mercado, em diálogo com temas vinculados ao desenvolvimento econômico."
   },
+  {
+    id: "p6",
+    nome: "Prof. Marcelo",
+    area: "Economia", // ajuste se quiser
+    imagem: "/professores/marcelo.jpg",
+    descricao: "Doutor pela UnB, com carreira desenvolvida no setor público (CVM, Bacen e ANA). Ampla experiência na elaboração de relatórios,  análises setoriais e construção de cenários. Essa diversidade de atuação permite boa compreensao de temas diversos tais como crédito, mercado de capitais, sistemas de pagamentos, cibersegurança e avaliação de recursos naturais. Em paralelo, carreira acadêmica, principalmente junto a UnB, lecionando, entre outras, disciplinas de Finanças, Estatística, Econometria, Contabilidade Nacional."
+  },
 ];
