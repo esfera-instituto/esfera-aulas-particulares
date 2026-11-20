@@ -26,9 +26,9 @@ export const professores: Professor[] = [
   },
   {
     id: "p4",
-    nome: "Profa. Aline",
+    nome: "Prof. Osvaldo",
     area: "Física", // ajuste se quiser
-    imagem: "/professores/aline.jpg",
-    descricao: "Graduanda em física pela Universidade de São paulo (USP), possui vários anos de experiência no ensino de Matemática e Física. Atua com aulas para ensino fundamental e médio, incluindo prepação para vestibulares."
+    imagem: "/professores/osvaldo.jpg",
+    descricao: "É doutorando em Economia dos Negócios pelo Insper, onde também atua como pesquisador de doutorado e monitor de disciplinas quantitativas para graduação e mestrado profissional.Possui experiência no ensino de disciplinas como Microeconomia, Macroeconomia, Estatística, Econometria, Cálculo e Finanças, com atuação em aulas particulares, monitorias acadêmicas e preparação de estudantes de graduação e pós-graduação."
   },
 ];
