@@ -7,7 +7,7 @@ export const professores: Professor[] = [
     area: "Matemática",
     imagem: "/professores/alex.jpg",
     descricao:
-      "Estudou na Universidade de São Paulo (USP) e na Universidade Estadual de Campinas (UNICAMP), possui mais de 20 anos de experiência no ensino de Matemática em cursos pré-vestibulares. Atua com aulas para ensino médio, preparação para vestibulares e também para ensino superior, incluindo disciplinas como Cálculo, Álgebra Linear, Estatística, Matemática Financeira, ..."
+      "Estudou na Universidade de São Paulo (USP) e na Universidade Estadual de Campinas (Unicamp), possui mais de 20 anos de experiência no ensino de Matemática em cursos pré-vestibulares.\n\nAtua com aulas para ensino médio, preparação para vestibulares e também para ensino superior, incluindo disciplinas como Cálculo, Álgebra Linear, Estatística e Matemática Financeira.\n\n"
   },
   {
     id: "p2",
@@ -15,14 +15,14 @@ export const professores: Professor[] = [
     area: "Física",
     imagem: "/professores/nicolas.jpg",
     descricao:
-      "Doutorando em Física pela Universidade Estadual Paulista (UNESP), possui vários anos de experiência no ensino de Matemática e Física. Atua com aulas para ensino fundamental, ensino médio, preparação para vestibulares e também para o ensino superior."
+      "Doutorando em Física pela Universidade Estadual Paulista (UNESP), possui vários anos de experiência no ensino de Matemática e Física.\n\nAtua com aulas para ensino fundamental, ensino médio, preparação para vestibulares e também para o ensino superior.\n\n"
   },
   {
     id: "p3",
     nome: "Profa. Isa",
     area: "Língua Portuguesa", // ajuste se quiser
     imagem: "/professores/isa.jpg",
-    descricao: "Atua como professora de Língua Portuguesa (Gramática, Interpretação de etxtos, Literatura e Redação) há mais de 15 anos. É graduada em Letras pela Universidade de São Paulo (USP), com habilitação em Português e Alemão (Bacharelado e Licenciatura). Tem experiência com Ensino Fundamental II, Ensino Médio e Cursos preparatórios voltados a vestibulares e concursos. Também atua como revisora e mentora de escrita acadêmica para o Ensino Superior."
+    descricao: "Atua como professora de Língua Portuguesa (Gramática, Interpretação de textos, Literatura e Redação) há mais de 15 anos.\n\nÉ graduada em Letras pela Universidade de São Paulo (USP), com habilitação em Português e Alemão (Bacharelado e Licenciatura).\n\nTem experiência com Ensino Fundamental II, Ensino Médio e Cursos preparatórios voltados a vestibulares e concursos. Também atua como revisora e mentora de escrita acadêmica para o Ensino Superior.\n\n"
   },
   {
     id: "p4",
@@ -36,13 +36,13 @@ export const professores: Professor[] = [
     nome: "Prof. Felipe",
     area: "Economia", // ajuste se quiser
     imagem: "/professores/felipe.jpg",
-    descricao: "É doutor em Ciências Econômicas, na área de Teoria Econômica, pela Universidade Estadual de Campinas (Unicamp). Sua trajetória de pesquisa se concentra em economia política, história econômica e planejamento econômico, com estudos sobre as experiências soviética e chinesa. Possui experiência de apoio à docência no ensino superior, com atuação no Programa de Estágio Docente da Unicamp nas disciplinas História Econômica Geral II e Economia Internacional II. Na sua graduação na Universidade Federal de Uberlândia (UFU), foi monitor de Microeconomia I e ministrou um minicurso de Nivelamento em Matemática. Sua produção acadêmica aborda o planejamento econômico soviético, a perestroika e as transformações da economia chinesa. No doutorado, investigou as reformas econômicas da China entre 1979 e 1992 e a transição para uma economia socialista de mercado, em diálogo com temas vinculados ao desenvolvimento econômico."
+    descricao: "É doutor em Ciências Econômicas, na área de Teoria Econômica, pela Universidade Estadual de Campinas (Unicamp). \n\nSua trajetória de pesquisa se concentra em economia política, história econômica e planejamento econômico, com estudos sobre as experiências soviética e chinesa.\n\nPossui experiência de apoio à docência no ensino superior, com atuação no Programa de Estágio Docente da Unicamp nas disciplinas História Econômica Geral II e Economia Internacional II. Na sua graduação na Universidade Federal de Uberlândia (UFU), foi monitor de Microeconomia I e ministrou um minicurso de Nivelamento em Matemática.\n\nSua produção acadêmica aborda o planejamento econômico soviético, a perestroika e as transformações da economia chinesa. No doutorado, investigou as reformas econômicas da China entre 1979 e 1992 e a transição para uma economia socialista de mercado, em diálogo com temas vinculados ao desenvolvimento econômico.\n\n"
   },
   {
     id: "p6",
     nome: "Prof. Marcelo",
     area: "Economia", // ajuste se quiser
     imagem: "/professores/marcelo.jpg",
-    descricao: "Doutor pela UnB, com carreira desenvolvida no setor público (CVM, Bacen e ANA). Ampla experiência na elaboração de relatórios,  análises setoriais e construção de cenários. Essa diversidade de atuação permite boa compreensão de temas diversos tais como crédito, mercado de capitais, sistemas de pagamentos, cibersegurança e avaliação de recursos naturais. Em paralelo, carreira acadêmica, principalmente junto a UnB, lecionando, entre outras, disciplinas de Finanças, Estatística, Econometria e Contabilidade Nacional."
+    descricao: "Doutor pela UnB, com carreira desenvolvida no setor público (CVM, Bacen e ANA).\n\nAmpla experiência na elaboração de relatórios, análises setoriais e construção de cenários. Essa diversidade de atuação permite boa compreensão de temas diversos tais como crédito, mercado de capitais, sistemas de pagamentos, cibersegurança e avaliação de recursos naturais.\n\nEm paralelo, carreira acadêmica, principalmente junto a UnB, lecionando, entre outras, disciplinas de Finanças, Estatística, Econometria e Contabilidade Nacional."
   },
 ];
