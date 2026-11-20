@@ -43,6 +43,6 @@ export const professores: Professor[] = [
     nome: "Prof. Marcelo",
     area: "Economia", // ajuste se quiser
     imagem: "/professores/marcelo.jpg",
-    descricao: "Doutor pela UnB, com carreira desenvolvida no setor público (CVM, Bacen e ANA). Ampla experiência na elaboração de relatórios,  análises setoriais e construção de cenários. Essa diversidade de atuação permite boa compreensao de temas diversos tais como crédito, mercado de capitais, sistemas de pagamentos, cibersegurança e avaliação de recursos naturais. Em paralelo, carreira acadêmica, principalmente junto a UnB, lecionando, entre outras, disciplinas de Finanças, Estatística, Econometria, Contabilidade Nacional."
+    descricao: "Doutor pela UnB, com carreira desenvolvida no setor público (CVM, Bacen e ANA). Ampla experiência na elaboração de relatórios,  análises setoriais e construção de cenários. Essa diversidade de atuação permite boa compreensão de temas diversos tais como crédito, mercado de capitais, sistemas de pagamentos, cibersegurança e avaliação de recursos naturais. Em paralelo, carreira acadêmica, principalmente junto a UnB, lecionando, entre outras, disciplinas de Finanças, Estatística, Econometria e Contabilidade Nacional."
   },
 ];
