@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "ESFERA Aulas Particulares | Cartão Digital",
+  title: "ESFERA Aulas Particulares & Atendimento Clínico | Cartão Digital",
   description:
-    "Aulas particulares de alto nível para Ensino Fundamental, Médio e Superior. Matemática, Física, Química, Biologia, Redação e mais.",
+    "Aulas particulares de alto nível para Ensino Fundamental, Médio e Superior e atendimento clínico em Psicopedagogia e Neuropsicopedagogia no Espaço ESFERA (Jardins).",
   openGraph: {
-    title: "ESFERA Aulas Particulares",
+    title: "ESFERA Aulas Particulares & Atendimento Clínico",
     description:
-      "Aulas particulares de alto nível para Ensino Fundamental, Médio e Superior.",
+      "Acompanhamento acadêmico personalizado e atendimento clínico em Psicopedagogia e Neuropsicopedagogia nos Jardins.",
     url: "https://esferaaulasparticulares.com.br/cartao",
     type: "website",
   },
 };
 
 const whatsapp =
-  "https://wa.me/5511960338060?text=Ol%C3%A1!%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20as%20aulas%20particulares%20do%20ESFERA.";
+  "https://wa.me/5511960338060?text=Ol%C3%A1!%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20os%20atendimentos%20do%20ESFERA.";
 
 const links = [
   {
@@ -85,18 +85,27 @@ const links = [
         <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
       </svg>
     ),
-    cor: "bg-[#08364E] hover:bg-[#0a4a6a] text-white",
+    cor: "bg-white/10 hover:bg-white/20 border border-white/15 text-white",
   },
 ];
 
-const niveis = ["Ensino Fundamental", "Ensino Médio", "Ensino Superior"];
+const niveis = [
+  { label: "Ensino Fundamental", href: "/ensino-fundamental", destaque: false },
+  { label: "Ensino Médio", href: "/ensino-medio", destaque: false },
+  { label: "Ensino Superior", href: "/ensino-superior", destaque: false },
+  {
+    label: "Psico & Neuropsicopedagogia",
+    href: "/psicopedagogia-neuropsicopedagogia",
+    destaque: true,
+  },
+];
 
 export default function CartaoPage() {
   return (
     <div className="min-h-screen bg-[#08364E] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-sm">
         {/* Logo — esfera com gradiente inline */}
-        <div className="flex flex-col items-center mb-8">
+        <div className="flex flex-col items-center mb-6">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 100 100"
@@ -140,20 +149,56 @@ export default function CartaoPage() {
           </p>
           <p className="mt-3 text-center text-white/70 text-sm leading-relaxed">
             Do fundamental ao superior, <br />
-            com método e dedicação.
+            com método, dedicação e suporte clínico.
           </p>
         </div>
 
-        {/* Tags */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
+        {/* Tags clicáveis */}
+        <div className="flex flex-wrap justify-center gap-2 mb-6">
           {niveis.map((n) => (
-            <span
-              key={n}
-              className="rounded-full border border-white/20 px-3 py-1 text-xs font-medium text-white/60"
+            <a
+              key={n.label}
+              href={n.href}
+              className={`inline-flex items-center gap-1 rounded-full px-3.5 py-1.5 text-xs font-medium transition ${
+                n.destaque
+                  ? "bg-white text-[#08364E] font-semibold shadow-sm hover:bg-blue-50"
+                  : "border border-white/25 text-white/85 hover:bg-white/15 hover:text-white"
+              }`}
             >
-              {n}
-            </span>
+              <span>{n.label}</span>
+              <span className="text-[10px] opacity-70">↗</span>
+            </a>
           ))}
+        </div>
+
+        {/* Destaque Clínico: Psicopedagogia & Neuropsicopedagogia */}
+        <div className="rounded-2xl bg-white/10 border border-white/20 p-4 mb-6">
+          <span className="inline-block rounded-full bg-white/15 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-blue-200">
+            Atendimento Clínico · Espaço ESFERA (Jardins)
+          </span>
+          <h2 className="mt-2 text-sm font-semibold text-white">
+            Psicopedagogia e Neuropsicopedagogia
+          </h2>
+          <p className="mt-1 text-xs leading-relaxed text-white/75">
+            Avaliação clínica, estimulação de funções executivas (atenção,
+            memória e organização) e intervenção individual em sala dedicada.
+          </p>
+          <div className="mt-3 flex flex-col gap-2">
+            <a
+              href="/psicopedagogia-neuropsicopedagogia"
+              className="flex items-center justify-between rounded-xl bg-white px-3.5 py-2.5 text-xs font-semibold text-[#08364E] transition hover:bg-blue-50"
+            >
+              <span>Conhecer etapas e metodologia</span>
+              <span>→</span>
+            </a>
+            <a
+              href="/investimento?aba=clinico"
+              className="flex items-center justify-between rounded-xl bg-white/10 border border-white/15 px-3.5 py-2.5 text-xs font-medium text-white transition hover:bg-white/20"
+            >
+              <span>Ver formatos e investimento</span>
+              <span>→</span>
+            </a>
+          </div>
         </div>
 
         {/* Links */}
