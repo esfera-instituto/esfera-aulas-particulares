@@ -24,7 +24,7 @@ export const Footer = () => (
             <Link href="/ensino-superior">Ensino Superior</Link>
           </li>
           <li>
-            <Link href="/psicopedagogia">Psicopedagogia & Neuropsicopedagogia</Link>
+            <Link href="/psicopedagogia-neuropsicopedagogia">Psicopedagogia & Neuropsicopedagogia</Link>
           </li>
           <li>
             <Link href="/equipe-docente">Equipe docente</Link>
