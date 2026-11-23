@@ -7,13 +7,13 @@ const especialidades = [
     badge: "Vínculo & Estratégias de Estudo",
     titulo: "Psicopedagogia Clínica",
     descricao:
-      "Investiga e intervém na relação do estudante com o aprender — abordando bloqueios emocionais, lacunas metodológicas, hábitos de estudo, organização acadêmica e construção da autonomia intelectual.",
+      "Indicada quando a demanda predominante envolve a relação do estudante com o aprender — abordando bloqueios emocionais, lacunas metodológicas, hábitos de estudo, organização acadêmica e construção da autonomia intelectual.",
   },
   {
     badge: "Funções Executivas & Neurocognição",
     titulo: "Neuropsicopedagogia Clínica",
     descricao:
-      "Atua na interface entre neurociência e aprendizagem, estimulando funções executivas como atenção sustentada, memória operacional, planejamento, controle inibitório e flexibilidade cognitiva (suporte a TDAH, dislexia, discalculia e TEA).",
+      "Indicada quando a queixa envolve rastreio e estimulação das funções executivas — atenção sustentada, memória operacional, planejamento, controle inibitório e flexibilidade cognitiva (suporte a TDAH, dislexia, discalculia e TEA).",
   },
 ];
 
@@ -59,15 +59,15 @@ const areas = [
 const etapas = [
   {
     numero: "01",
-    titulo: "Anamnese com os pais",
+    titulo: "Triagem e anamnese",
     descricao:
-      "Primeiro encontro de 50 minutos (no Espaço ESFERA ou on-line) para escuta da família, histórico escolar e definição do percurso.",
+      "Primeiro encontro de 50 minutos com os pais (no Espaço ESFERA ou on-line) para escuta do histórico escolar e definição do especialista titular.",
   },
   {
     numero: "02",
     titulo: "Avaliação clínica (5 sessões)",
     descricao:
-      "Sessões individuais de 50 minutos no Espaço ESFERA com protocolos cognitivos, provas operatórias e recursos estruturados.",
+      "Sessões individuais de 50 minutos no Espaço ESFERA com o especialista titular, utilizando protocolos cognitivos, provas operatórias e recursos estruturados.",
   },
   {
     numero: "03",
@@ -127,6 +127,19 @@ export default function PsicopedagogiaPage() {
                 </p>
               </div>
             ))}
+          </div>
+
+          {/* Esclarecimento sobre condução individualizada */}
+          <div className="mt-6 rounded-xl border border-blue-100 bg-blue-50/50 p-4 text-sm leading-relaxed text-slate-600">
+            <strong className="font-semibold text-marinho">
+              Condução individualizada por especialista titular:
+            </strong>{" "}
+            Na triagem inicial, direcionamos o estudante ao profissional mais
+            indicado para o seu perfil (Psicopedagogo{" "}
+            <em>ou</em> Neuropsicopedagogo), que conduz integralmente todas as
+            etapas da avaliação e do acompanhamento. Caso haja indicação clínica
+            de olhar complementar na outra frente, é possível solicitar uma
+            interconsulta pontual.
           </div>
         </Container>
       </section>
@@ -216,7 +229,7 @@ export default function PsicopedagogiaPage() {
         <CTABox
           title="Deseja agendar uma conversa inicial ou avaliação?"
           description="Nossa equipe orienta o melhor encaminhamento entre Psicopedagogia e Neuropsicopedagogia conforme o perfil do estudante."
-          href="/contato?origem=/psicopedagogia"
+          href="/contato?origem=/psicopedagogia-neuropsicopedagogia"
           buttonLabel="Falar com a equipe do ESFERA"
         />
       </Section>
