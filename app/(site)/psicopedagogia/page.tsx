@@ -83,55 +83,6 @@ const etapas = [
   },
 ];
 
-const planosInvestimento = [
-  {
-    destaque: false,
-    tag: "Primeiro passo",
-    titulo: "Sessão Avulsa / Triagem Inicial",
-    duracao: "1 encontro de 50 minutos",
-    valor: "R$ 300",
-    subvalor: "por sessão",
-    descricao:
-      "Indicado para entrevista inicial de anamnese com os pais (presencial ou on-line) ou atendimento pontual de orientação.",
-    itens: [
-      "Escuta clínica do histórico escolar e familiar",
-      "Análise das demandas acadêmicas e cognitivas",
-      "Indicação do percurso avaliativo ou pedagógico",
-    ],
-  },
-  {
-    destaque: true,
-    tag: "Mais procurado · Diagnóstico funcional",
-    titulo: "Pacote Avaliação Clínica Completa",
-    duracao: "7 encontros de 50 minutos + Parecer",
-    valor: "R$ 2.100",
-    subvalor: "parcelável em até 4x",
-    descricao:
-      "Investigação aprofundada do perfil de aprendizagem e das funções executivas do estudante no Espaço ESFERA.",
-    itens: [
-      "1 sessão de anamnese com os pais (presencial ou on-line)",
-      "5 sessões de avaliação clínica com o estudante (Espaço ESFERA)",
-      "1 sessão de devolutiva com entrega de Parecer Técnico escrito",
-      "Diretrizes de manejo para professores particulares e escola",
-    ],
-  },
-  {
-    destaque: false,
-    tag: "Acompanhamento contínuo",
-    titulo: "Planos de Intervenção Semanal",
-    duracao: "Sessões semanais de 50 minutos",
-    valor: "A partir de R$ 260",
-    subvalor: "por sessão nos pacotes",
-    descricao:
-      "Atendimento semanal contínuo no Espaço ESFERA após a etapa avaliativa para reabilitação e autonomia nos estudos.",
-    itens: [
-      "Plano Mensal (4 sessões): R$ 1.120 (R$ 280/sessão)",
-      "Plano Trimestral (12 sessões): R$ 3.120 (R$ 260/sessão)",
-      "Reunião / Visita Escolar (60 min): R$ 320 (on-line) ou R$ 380 (presencial)",
-    ],
-  },
-];
-
 export default function PsicopedagogiaPage() {
   return (
     <>
@@ -222,98 +173,43 @@ export default function PsicopedagogiaPage() {
               </div>
             ))}
           </div>
+
+          <div className="mt-10 rounded-2xl border border-slate-200 bg-slate-50 p-6 text-sm leading-relaxed text-slate-600">
+            <h3 className="font-semibold text-marinho">
+              Diretrizes do atendimento clínico
+            </h3>
+            <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+              <li>
+                <strong>Setting exclusivo:</strong> As sessões com o estudante
+                ocorrem no Espaço ESFERA para garantir silêncio e acesso ao
+                acervo de protocolos.
+              </li>
+              <li>
+                <strong>Remarcações:</strong> Cancelamentos ou reagendamentos
+                devem ser solicitados com pelo menos 24h de antecedência.
+              </li>
+              <li>
+                <strong>Parecer Técnico:</strong> O Parecer Psicopedagógico /
+                Neuropsicopedagógico orienta família, escola e professores, não
+                substituindo laudo médico (CID).
+              </li>
+              <li>
+                <strong>Sigilo e integração:</strong> O prontuário clínico é
+                sigiloso; apenas recomendações pedagógicas são compartilhadas
+                com os professores do ESFERA mediante autorização.
+              </li>
+            </ul>
+            <div className="mt-4 pt-4 border-t border-slate-200/80">
+              <a
+                href="/investimento?aba=clinico"
+                className="text-sm font-semibold text-marinho hover:underline"
+              >
+                Consultar formatos e investimento do atendimento clínico →
+              </a>
+            </div>
+          </div>
         </Container>
       </section>
-
-      {/* Formatos e Investimento */}
-      <Section title="Formatos e investimento">
-        <p className="-mt-4 mb-8 text-slate-500">
-          Atendimentos presenciais no Espaço ESFERA (Jardins), com sessões
-          individuais de 50 minutos.
-        </p>
-
-        <div className="grid gap-6 lg:grid-cols-3">
-          {planosInvestimento.map((plano) => (
-            <div
-              key={plano.titulo}
-              className={`flex flex-col justify-between rounded-2xl border p-6 shadow-sm ${
-                plano.destaque
-                  ? "border-marinho bg-white ring-1 ring-marinho/10"
-                  : "border-slate-200 bg-white"
-              }`}
-            >
-              <div>
-                <span
-                  className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
-                    plano.destaque
-                      ? "bg-blue-50 text-blue-700"
-                      : "bg-slate-100 text-slate-600"
-                  }`}
-                >
-                  {plano.tag}
-                </span>
-
-                <h3 className="mt-4 text-lg font-semibold text-marinho">
-                  {plano.titulo}
-                </h3>
-                <p className="text-xs font-medium text-slate-400">
-                  {plano.duracao}
-                </p>
-
-                <div className="mt-4 flex items-baseline gap-2">
-                  <span className="text-3xl font-bold text-marinho">
-                    {plano.valor}
-                  </span>
-                  <span className="text-xs text-slate-500">
-                    {plano.subvalor}
-                  </span>
-                </div>
-
-                <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                  {plano.descricao}
-                </p>
-
-                <ul className="mt-5 space-y-2.5 border-t border-slate-100 pt-4 text-sm text-slate-600">
-                  {plano.itens.map((item) => (
-                    <li key={item} className="flex items-start gap-2">
-                      <span className="mt-0.5 font-bold text-blue-700">✓</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Informações de transparência e conduta */}
-        <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-6 text-sm leading-relaxed text-slate-600">
-          <h4 className="font-semibold text-marinho">
-            Diretrizes do atendimento clínico
-          </h4>
-          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-            <li>
-              <strong>Setting exclusivo:</strong> As sessões com o estudante
-              ocorrem no Espaço ESFERA para garantir silêncio e acesso ao
-              acervo de protocolos.
-            </li>
-            <li>
-              <strong>Remarcações:</strong> Cancelamentos ou reagendamentos
-              devem ser solicitados com pelo menos 24h de antecedência.
-            </li>
-            <li>
-              <strong>Parecer Técnico:</strong> O Parecer Psicopedagógico /
-              Neuropsicopedagógico orienta família, escola e professores, não
-              substituindo laudo médico (CID).
-            </li>
-            <li>
-              <strong>Sigilo e integração:</strong> O prontuário clínico é
-              sigiloso; apenas recomendações pedagógicas são compartilhadas com
-              os professores do ESFERA mediante autorização.
-            </li>
-          </ul>
-        </div>
-      </Section>
 
       {/* CTA */}
       <Section>

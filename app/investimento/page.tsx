@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const NIVEIS = [
   { value: "fundamental_1", label: "Ensino Fundamental I" },
@@ -46,6 +46,53 @@ const OPCOES_QUANTIDADE = [
   { valor: 4, label: "4 ou mais alunos" },
 ];
 
+const SERVICOS_CLINICOS = [
+  {
+    titulo: "Sessão Avulsa / Triagem Inicial",
+    duracao: "1 encontro de 50 minutos · Espaço ESFERA ou On-line",
+    valor: 300,
+    detalhe:
+      "Encontro inicial de anamnese com os pais ou sessão pontual de orientação.",
+  },
+  {
+    titulo: "Avaliação Clínica Completa (Pacote)",
+    duracao: "7 encontros de 50 minutos + Parecer Técnico escrito",
+    valor: 2100,
+    detalhe:
+      "1 anamnese com os pais + 5 sessões de avaliação no Espaço ESFERA + 1 devolutiva com entrega de Parecer Técnico.",
+  },
+  {
+    titulo: "Plano de Intervenção Mensal",
+    duracao: "4 sessões semanais de 50 minutos · Espaço ESFERA",
+    valor: 1120,
+    subvalor: 280,
+    detalhe:
+      "Acompanhamento clínico semanal após a etapa avaliativa.",
+  },
+  {
+    titulo: "Plano de Intervenção Trimestral",
+    duracao: "12 sessões semanais de 50 minutos · Espaço ESFERA",
+    valor: 3120,
+    subvalor: 260,
+    detalhe:
+      "Acompanhamento contínuo de 3 meses para consolidação cognitiva e autonomia.",
+  },
+  {
+    titulo: "Reunião / Visita Escolar (On-line)",
+    duracao: "60 minutos · Reunião com a equipe pedagógica da escola",
+    valor: 320,
+    detalhe:
+      "Alinhamento técnico entre o especialista e a coordenação da escola.",
+  },
+  {
+    titulo: "Reunião / Visita Escolar (Presencial)",
+    duracao: "60 minutos · Presencial na escola do estudante",
+    valor: 380,
+    detalhe:
+      "Visita técnica presencial do especialista à escola do estudante.",
+  },
+];
+
 // Desconto de grupo — vale igual para aula avulsa e para pacote
 function descontoGrupo(quantidadeAlunos: number) {
   if (quantidadeAlunos <= 1) return 0;
@@ -59,9 +106,19 @@ function formatarMoeda(valor: number) {
 }
 
 export default function InvestimentoPage() {
+  const [aba, setAba] = useState<"aulas" | "clinico">("aulas");
   const [nivel, setNivel] = useState("");
   const [modalidade, setModalidade] = useState("");
   const [quantidadeAlunos, setQuantidadeAlunos] = useState(1);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("aba") === "clinico") {
+        setAba("clinico");
+      }
+    }
+  }, []);
 
   const valorHora =
     nivel && modalidade ? VALOR_HORA[modalidade]?.[nivel] || 0 : 0;
@@ -75,8 +132,8 @@ export default function InvestimentoPage() {
 
   return (
     <div className="min-h-screen bg-[#08364E] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-sm">
-        <div className="flex flex-col items-center mb-8">
+      <div className="w-full max-w-md">
+        <div className="flex flex-col items-center mb-6">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 100 100"
@@ -103,162 +160,249 @@ export default function InvestimentoPage() {
           <p className="mt-3 text-lg font-semibold tracking-widest text-white uppercase">
             ESFERA
           </p>
-          <p className="mt-3 text-center text-white/70 text-sm leading-relaxed">
+          <p className="mt-2 text-center text-white/70 text-sm leading-relaxed">
             Invista no seu aprendizado
           </p>
         </div>
 
-        <div className="rounded-2xl px-5 py-4 bg-white/10 border border-white/10 mb-6">
-          <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-3">
-            Simule o seu investimento
-          </p>
-          <div className="flex flex-col gap-3 mb-4">
-            <select
-              value={nivel}
-              onChange={(e) => setNivel(e.target.value)}
-              className={selectClass}
-            >
-              <option value="" className="text-gray-800">
-                Selecione o nível de ensino
-              </option>
-              {NIVEIS.map((n) => (
-                <option key={n.value} value={n.value} className="text-gray-800">
-                  {n.label}
-                </option>
-              ))}
-            </select>
-            <select
-              value={modalidade}
-              onChange={(e) => setModalidade(e.target.value)}
-              className={selectClass}
-            >
-              <option value="" className="text-gray-800">
-                Selecione a modalidade
-              </option>
-              {MODALIDADES.map((m) => (
-                <option key={m.value} value={m.value} className="text-gray-800">
-                  {m.label}
-                </option>
-              ))}
-            </select>
-            <select
-              value={quantidadeAlunos}
-              onChange={(e) => setQuantidadeAlunos(Number(e.target.value))}
-              className={selectClass}
-            >
-              {OPCOES_QUANTIDADE.map((o) => (
-                <option key={o.valor} value={o.valor} className="text-gray-800">
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </div>
+        {/* Seletor entre Aulas Particulares e Atendimento Clínico */}
+        <div className="grid grid-cols-2 gap-1.5 rounded-xl bg-white/10 p-1 border border-white/10 mb-6">
+          <button
+            type="button"
+            onClick={() => setAba("aulas")}
+            className={`rounded-lg py-2 px-3 text-xs font-semibold transition ${
+              aba === "aulas"
+                ? "bg-white text-[#08364E] shadow-sm"
+                : "text-white/70 hover:text-white"
+            }`}
+          >
+            Aulas Particulares
+          </button>
+          <button
+            type="button"
+            onClick={() => setAba("clinico")}
+            className={`rounded-lg py-2 px-3 text-xs font-semibold transition ${
+              aba === "clinico"
+                ? "bg-white text-[#08364E] shadow-sm"
+                : "text-white/70 hover:text-white"
+            }`}
+          >
+            Psico &amp; Neuropsico
+          </button>
+        </div>
 
-          {valorHora > 0 && (
-            <div className="flex flex-col gap-2">
-              <div className="text-left rounded-xl px-4 py-3 border bg-white/5 border-white/10">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-white">
-                    Aula pontual{emGrupo ? " (grupo)" : ""}
-                  </span>
-                  <span className="text-sm font-semibold text-white">
-                    {formatarMoeda(valorHoraAvulsaComGrupo)}/h
-                  </span>
-                </div>
-                {emGrupo && (
-                  <p className="text-xs text-white/40 mt-0.5">
-                    -{descontoAtual}% por aula em grupo (por aluno)
-                  </p>
-                )}
+        {aba === "aulas" ? (
+          <>
+            <div className="rounded-2xl px-5 py-4 bg-white/10 border border-white/10 mb-6">
+              <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-3">
+                Simule o seu investimento
+              </p>
+              <div className="flex flex-col gap-3 mb-4">
+                <select
+                  value={nivel}
+                  onChange={(e) => setNivel(e.target.value)}
+                  className={selectClass}
+                >
+                  <option value="" className="text-gray-800">
+                    Selecione o nível de ensino
+                  </option>
+                  {NIVEIS.map((n) => (
+                    <option key={n.value} value={n.value} className="text-gray-800">
+                      {n.label}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={modalidade}
+                  onChange={(e) => setModalidade(e.target.value)}
+                  className={selectClass}
+                >
+                  <option value="" className="text-gray-800">
+                    Selecione a modalidade
+                  </option>
+                  {MODALIDADES.map((m) => (
+                    <option key={m.value} value={m.value} className="text-gray-800">
+                      {m.label}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={quantidadeAlunos}
+                  onChange={(e) => setQuantidadeAlunos(Number(e.target.value))}
+                  className={selectClass}
+                >
+                  {OPCOES_QUANTIDADE.map((o) => (
+                    <option key={o.valor} value={o.valor} className="text-gray-800">
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              {!emGrupo &&
-                TAMANHOS_PACOTE.map((p) => {
-                  const valorHoraEfetivo = valorHora * (1 - p.desconto / 100);
-                  return (
-                    <div
-                      key={p.horas}
-                      className="text-left rounded-xl px-4 py-3 border bg-white/5 border-white/10"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-white">
-                          Pacote de {p.horas}h
-                        </span>
-                        <span className="text-sm font-semibold text-white">
-                          {formatarMoeda(valorHoraEfetivo)}/h
-                        </span>
-                      </div>
-                      <p className="text-xs text-white/40 mt-0.5">
-                        -{p.desconto}% · total{" "}
-                        {formatarMoeda(valorHoraEfetivo * p.horas)} · validade{" "}
-                        {p.validade} dias
-                      </p>
+              {valorHora > 0 && (
+                <div className="flex flex-col gap-2">
+                  <div className="text-left rounded-xl px-4 py-3 border bg-white/5 border-white/10">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-white">
+                        Aula pontual{emGrupo ? " (grupo)" : ""}
+                      </span>
+                      <span className="text-sm font-semibold text-white">
+                        {formatarMoeda(valorHoraAvulsaComGrupo)}/h
+                      </span>
                     </div>
-                  );
-                })}
-
-              {emGrupo &&
-                TAMANHOS_PACOTE.map((p) => {
-                  const valorHoraEfetivo = valorHora * (1 - descontoAtual / 100);
-                  return (
-                    <div
-                      key={p.horas}
-                      className="text-left rounded-xl px-4 py-3 border bg-white/5 border-white/10"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-white">
-                          Pacote de {p.horas}h (grupo)
-                        </span>
-                        <span className="text-sm font-semibold text-white">
-                          {formatarMoeda(valorHoraEfetivo)}/h
-                        </span>
-                      </div>
+                    {emGrupo && (
                       <p className="text-xs text-white/40 mt-0.5">
-                        -{descontoAtual}% por aluno · total (por aluno){" "}
-                        {formatarMoeda(valorHoraEfetivo * p.horas)} · validade{" "}
-                        {p.validade} dias
+                        -{descontoAtual}% por aula em grupo (por aluno)
                       </p>
+                    )}
+                  </div>
+
+                  {!emGrupo &&
+                    TAMANHOS_PACOTE.map((p) => {
+                      const valorHoraEfetivo = valorHora * (1 - p.desconto / 100);
+                      return (
+                        <div
+                          key={p.horas}
+                          className="text-left rounded-xl px-4 py-3 border bg-white/5 border-white/10"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-white">
+                              Pacote de {p.horas}h
+                            </span>
+                            <span className="text-sm font-semibold text-white">
+                              {formatarMoeda(valorHoraEfetivo)}/h
+                            </span>
+                          </div>
+                          <p className="text-xs text-white/40 mt-0.5">
+                            -{p.desconto}% · total{" "}
+                            {formatarMoeda(valorHoraEfetivo * p.horas)} · validade{" "}
+                            {p.validade} dias
+                          </p>
+                        </div>
+                      );
+                    })}
+
+                  {emGrupo &&
+                    TAMANHOS_PACOTE.map((p) => {
+                      const valorHoraEfetivo = valorHora * (1 - descontoAtual / 100);
+                      return (
+                        <div
+                          key={p.horas}
+                          className="text-left rounded-xl px-4 py-3 border bg-white/5 border-white/10"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-white">
+                              Pacote de {p.horas}h (grupo)
+                            </span>
+                            <span className="text-sm font-semibold text-white">
+                              {formatarMoeda(valorHoraEfetivo)}/h
+                            </span>
+                          </div>
+                          <p className="text-xs text-white/40 mt-0.5">
+                            -{descontoAtual}% por aluno · total (por aluno){" "}
+                            {formatarMoeda(valorHoraEfetivo * p.horas)} · validade{" "}
+                            {p.validade} dias
+                          </p>
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-2xl px-5 py-4 bg-white/5 border border-white/10 mb-4">
+              <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-3">
+                Desconto para aulas em grupo
+              </p>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white/70">2 alunos</span>
+                  <span className="text-white font-medium">-25%</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white/70">3 alunos</span>
+                  <span className="text-white font-medium">-30%</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white/70">4 ou mais alunos</span>
+                  <span className="text-white font-medium">-35%</span>
+                </div>
+              </div>
+              <p className="text-xs text-white/40 mt-3 leading-relaxed">
+                Vale para aula pontual ou pacote — em pacote, cada aluno do grupo
+                tem seu próprio pacote de horas, comprados juntos.
+              </p>
+            </div>
+
+            <div className="rounded-2xl px-5 py-4 bg-white/5 border border-white/10 mb-4">
+              <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-3">
+                Regras dos descontos
+              </p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                Os descontos de pacote, aulas em grupo e condições
+                promocionais não são cumulativos. Quando houver mais de uma condição
+                aplicável, prevalecerá o maior desconto.
+              </p>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="rounded-2xl px-5 py-4 bg-white/10 border border-white/10 mb-4">
+              <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-1">
+                Psicopedagogia e Neuropsicopedagogia
+              </p>
+              <p className="text-xs text-white/50 mb-4 leading-relaxed">
+                Atendimentos presenciais individuais no Espaço ESFERA (Alameda
+                Casa Branca, 393 — Jardins), com sessões de 50 minutos.
+              </p>
+
+              <div className="flex flex-col gap-2.5">
+                {SERVICOS_CLINICOS.map((item) => (
+                  <div
+                    key={item.titulo}
+                    className="text-left rounded-xl px-4 py-3 border bg-white/5 border-white/10"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="text-sm font-medium text-white">
+                        {item.titulo}
+                      </span>
+                      <span className="text-sm font-semibold text-white shrink-0">
+                        {formatarMoeda(item.valor)}
+                      </span>
                     </div>
-                  );
-                })}
+                    <p className="text-xs text-white/60 mt-0.5">
+                      {item.duracao}
+                      {item.subvalor
+                        ? ` · ${formatarMoeda(item.subvalor)}/sessão`
+                        : ""}
+                    </p>
+                    <p className="text-xs text-white/40 mt-1 leading-relaxed">
+                      {item.detalhe}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
-          )}
-        </div>
 
-        <div className="rounded-2xl px-5 py-4 bg-white/5 border border-white/10 mb-4">
-          <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-3">
-            Desconto para aulas em grupo
-          </p>
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-white/70">2 alunos</span>
-              <span className="text-white font-medium">-25%</span>
+            <div className="rounded-2xl px-5 py-4 bg-white/5 border border-white/10 mb-4">
+              <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-3">
+                Condições do atendimento clínico
+              </p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                As sessões com o estudante ocorrem exclusivamente no Espaço
+                ESFERA. Cancelamentos ou remarcações devem ser solicitados com
+                antecedência mínima de 24 horas. O Parecer Técnico escrito não
+                substitui laudo médico (CID).{" "}
+                <a
+                  href="/psicopedagogia"
+                  className="text-white underline hover:text-white/80"
+                >
+                  Saiba mais sobre as etapas clínicas →
+                </a>
+              </p>
             </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-white/70">3 alunos</span>
-              <span className="text-white font-medium">-30%</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-white/70">4 ou mais alunos</span>
-              <span className="text-white font-medium">-35%</span>
-            </div>
-          </div>
-          <p className="text-xs text-white/40 mt-3 leading-relaxed">
-            Vale para aula pontual ou pacote — em pacote, cada aluno do grupo
-            tem seu próprio pacote de horas, comprados juntos.
-          </p>
-        </div>
-
-        <div className="rounded-2xl px-5 py-4 bg-white/5 border border-white/10 mb-4">
-          <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-3">
-            Regras dos descontos
-          </p>
-          <p className="text-sm text-white/70 leading-relaxed">
-            Os descontos de pacote, aulas em grupo e condições
-            promocionais não são cumulativos. Quando houver mais de uma condição
-            aplicável, prevalecerá o maior desconto.
-          </p>
-        </div>
+          </>
+        )}
 
         <div className="rounded-2xl px-5 py-4 bg-white/5 border border-white/10 mb-8">
           <p className="text-xs font-medium text-white/60 uppercase tracking-wide mb-3">
