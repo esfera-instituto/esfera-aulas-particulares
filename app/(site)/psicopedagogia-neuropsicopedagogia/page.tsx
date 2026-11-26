@@ -44,9 +44,9 @@ const areas = [
   },
   {
     icone: "🏫",
-    titulo: "Alinhamento com a escola",
+    titulo: "Observação e alinhamento escolar",
     descricao:
-      "Reuniões técnicas com a coordenação pedagógica da escola para compartilhar estratégias e adaptações.",
+      "Mediante autorização da família e do colégio, o especialista realiza visita de observação em sala de aula e reuniões técnicas com a coordenação.",
   },
   {
     icone: "👨‍👩‍👧",
@@ -61,13 +61,13 @@ const etapas = [
     numero: "01",
     titulo: "Triagem e anamnese",
     descricao:
-      "Primeiro encontro de 50 minutos com os pais (no Espaço ESFERA ou on-line) para escuta do histórico escolar e definição do especialista titular.",
+      "Primeiro encontro de 50 minutos com os pais (no Espaço ESFERA, em domicílio ou on-line) para escuta do histórico escolar e definição do especialista titular.",
   },
   {
     numero: "02",
-    titulo: "Avaliação clínica (5 sessões)",
+    titulo: "Avaliação clínica e escolar",
     descricao:
-      "Sessões individuais de 50 minutos no Espaço ESFERA com o especialista titular, utilizando protocolos cognitivos, provas operatórias e recursos estruturados.",
+      "Sessões individuais de 50 minutos com protocolos cognitivos e provas operatórias, com possibilidade de visita de observação no colégio do aluno.",
   },
   {
     numero: "03",
@@ -91,7 +91,7 @@ export default function PsicopedagogiaPage() {
         <Container>
           <div className="max-w-3xl">
             <span className="inline-block rounded-full bg-blue-50 px-4 py-1 text-sm font-medium text-blue-700">
-              Atendimento Clínico · Espaço ESFERA (Jardins)
+              Atendimento Clínico · Espaço ESFERA, Domicílio ou On-line
             </span>
             <h1 className="mt-4 text-3xl font-semibold text-marinho sm:text-4xl">
               Psicopedagogia e Neuropsicopedagogia
@@ -100,12 +100,13 @@ export default function PsicopedagogiaPage() {
               O ESFERA oferece acompanhamento clínico especializado para
               estudantes que enfrentam dificuldades de aprendizagem, desafios
               de atenção e funções executivas ou necessidade de estruturar sua
-              autonomia nos estudos. Os atendimentos acontecem presencialmente
-              em sala dedicada no{" "}
+              autonomia nos estudos. Os atendimentos acontecem em sala dedicada
+              no{" "}
               <strong className="font-semibold text-marinho">
                 Espaço ESFERA (Alameda Casa Branca, 393)
               </strong>
-              , com acervo técnico e ambiente silencioso.
+              , em domicílio ou on-line, sempre conduzidos pelo especialista
+              titular.
             </p>
           </div>
 
@@ -193,23 +194,23 @@ export default function PsicopedagogiaPage() {
             </h3>
             <ul className="mt-3 grid gap-2 sm:grid-cols-2">
               <li>
-                <strong>Setting exclusivo:</strong> As sessões com o estudante
-                ocorrem no Espaço ESFERA para garantir silêncio e acesso ao
-                acervo de protocolos.
+                <strong>Formatos flexíveis:</strong> As sessões ocorrem no
+                Espaço ESFERA (com acervo técnico dedicado), em domicílio ou
+                on-line, conforme a etapa e a necessidade do aluno.
+              </li>
+              <li>
+                <strong>Visita escolar autorizada:</strong> Quando indicada na
+                avaliação, a observação em sala de aula no colégio é realizada
+                somente com autorização expressa dos pais e da escola.
               </li>
               <li>
                 <strong>Remarcações:</strong> Cancelamentos ou reagendamentos
                 devem ser solicitados com pelo menos 24h de antecedência.
               </li>
               <li>
-                <strong>Parecer Técnico:</strong> O Parecer Psicopedagógico /
-                Neuropsicopedagógico orienta família, escola e professores, não
-                substituindo laudo médico (CID).
-              </li>
-              <li>
-                <strong>Sigilo e integração:</strong> O prontuário clínico é
-                sigiloso; apenas recomendações pedagógicas são compartilhadas
-                com os professores do ESFERA mediante autorização.
+                <strong>Parecer e sigilo:</strong> O Parecer Técnico orienta
+                família, escola e professores (sem substituir laudo médico CID),
+                preservando o sigilo do prontuário clínico.
               </li>
             </ul>
             <div className="mt-4 pt-4 border-t border-slate-200/80">
