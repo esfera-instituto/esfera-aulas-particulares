@@ -59,9 +59,9 @@ const areas = [
 const etapas = [
   {
     numero: "01",
-    titulo: "Triagem e anamnese",
+    titulo: "Anamnese com os pais",
     descricao:
-      "Primeiro encontro de 50 minutos com os pais (no Espaço ESFERA, em domicílio ou on-line) para escuta do histórico escolar e definição do especialista titular.",
+      "Primeiro encontro de 50 minutos com os pais (no Espaço ESFERA, em domicílio ou on-line) conduzido pelo especialista titular para escuta do histórico escolar.",
   },
   {
     numero: "02",
@@ -133,14 +133,15 @@ export default function PsicopedagogiaPage() {
           {/* Esclarecimento sobre condução individualizada */}
           <div className="mt-6 rounded-xl border border-blue-100 bg-blue-50/50 p-4 text-sm leading-relaxed text-slate-600">
             <strong className="font-semibold text-marinho">
-              Condução individualizada por especialista titular:
+              Atendimento conduzido por especialista titular:
             </strong>{" "}
-            Na triagem inicial, direcionamos o estudante ao profissional mais
-            indicado para o seu perfil (Psicopedagogo{" "}
-            <em>ou</em> Neuropsicopedagogo), que conduz integralmente todas as
-            etapas da avaliação e do acompanhamento. Caso haja indicação clínica
-            de olhar complementar na outra frente, é possível solicitar uma
-            interconsulta pontual.
+            Antes da primeira sessão, nossa equipe alinha com a família o
+            perfil da demanda para direcionar o estudante diretamente ao
+            especialista mais indicado (Psicopedagogo{" "}
+            <em>ou</em> Neuropsicopedagogo), que conduz integralmente a
+            anamnese, a avaliação e o acompanhamento. Caso haja indicação
+            clínica de olhar complementar na outra frente, é possível solicitar
+            uma interconsulta pontual.
           </div>
         </Container>
       </section>
