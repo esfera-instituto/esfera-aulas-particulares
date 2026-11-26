@@ -133,15 +133,14 @@ export default function PsicopedagogiaPage() {
           {/* Esclarecimento sobre condução individualizada */}
           <div className="mt-6 rounded-xl border border-blue-100 bg-blue-50/50 p-4 text-sm leading-relaxed text-slate-600">
             <strong className="font-semibold text-marinho">
-              Atendimento conduzido por especialista titular:
+              Escuta clínica desde o primeiro encontro:
             </strong>{" "}
-            Antes da primeira sessão, nossa equipe alinha com a família o
-            perfil da demanda para direcionar o estudante diretamente ao
-            especialista mais indicado (Psicopedagogo{" "}
-            <em>ou</em> Neuropsicopedagogo), que conduz integralmente a
-            anamnese, a avaliação e o acompanhamento. Caso haja indicação
-            clínica de olhar complementar na outra frente, é possível solicitar
-            uma interconsulta pontual.
+            A primeira conversa (anamnese) é sempre realizada diretamente por
+            um especialista — Psicopedagogo <em>ou</em> Neuropsicopedagogo —,
+            sem etapas intermediárias. Esse profissional conduz integralmente a
+            avaliação e o acompanhamento do estudante; caso identifique
+            indicação clínica de um olhar complementar na outra frente, é
+            possível solicitar uma interconsulta pontual.
           </div>
         </Container>
       </section>
