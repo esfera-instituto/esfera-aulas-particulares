@@ -49,7 +49,7 @@ const OPCOES_QUANTIDADE = [
 const SERVICOS_CLINICOS = [
   {
     titulo: "Sessão Avulsa / Triagem Inicial",
-    duracao: "1 encontro de 50 minutos · Espaço ESFERA ou On-line",
+    duracao: "1 encontro de 50 minutos · Espaço ESFERA, Domicílio ou On-line",
     valor: 300,
     detalhe:
       "Encontro inicial de anamnese com os pais ou sessão pontual de orientação.",
@@ -59,11 +59,11 @@ const SERVICOS_CLINICOS = [
     duracao: "7 encontros de 50 minutos + Parecer Técnico escrito",
     valor: 2100,
     detalhe:
-      "1 anamnese com os pais + 5 sessões de avaliação no Espaço ESFERA + 1 devolutiva com entrega de Parecer Técnico.",
+      "1 anamnese com os pais + 5 sessões de avaliação (Espaço ESFERA, domicílio ou on-line) + 1 devolutiva com entrega de Parecer Técnico.",
   },
   {
     titulo: "Plano de Intervenção Mensal",
-    duracao: "4 sessões semanais de 50 minutos · Espaço ESFERA",
+    duracao: "4 sessões semanais de 50 minutos · Presencial ou On-line",
     valor: 1120,
     subvalor: 280,
     detalhe:
@@ -71,25 +71,25 @@ const SERVICOS_CLINICOS = [
   },
   {
     titulo: "Plano de Intervenção Trimestral",
-    duracao: "12 sessões semanais de 50 minutos · Espaço ESFERA",
+    duracao: "12 sessões semanais de 50 minutos · Presencial ou On-line",
     valor: 3120,
     subvalor: 260,
     detalhe:
       "Acompanhamento contínuo de 3 meses para consolidação cognitiva e autonomia.",
   },
   {
-    titulo: "Reunião / Visita Escolar (On-line)",
+    titulo: "Reunião / Alinhamento Escolar (On-line)",
     duracao: "60 minutos · Reunião com a equipe pedagógica da escola",
     valor: 320,
     detalhe:
       "Alinhamento técnico entre o especialista e a coordenação da escola.",
   },
   {
-    titulo: "Reunião / Visita Escolar (Presencial)",
-    duracao: "60 minutos · Presencial na escola do estudante",
+    titulo: "Visita e Observação Escolar (Presencial)",
+    duracao: "Presencial no colégio do estudante (observação + coordenação)",
     valor: 380,
     detalhe:
-      "Visita técnica presencial do especialista à escola do estudante.",
+      "Observação em sala de aula e alinhamento técnico presencial com a escola, mediante autorização da família e do colégio.",
   },
 ];
 
@@ -352,8 +352,9 @@ export default function InvestimentoPage() {
                 Psicopedagogia e Neuropsicopedagogia
               </p>
               <p className="text-xs text-white/50 mb-4 leading-relaxed">
-                Atendimentos presenciais individuais no Espaço ESFERA (Alameda
-                Casa Branca, 393 — Jardins), com sessões de 50 minutos.
+                Atendimentos individuais no Espaço ESFERA (Alameda Casa Branca,
+                393 — Jardins), em domicílio ou on-line, com sessões de 50
+                minutos.
               </p>
 
               <div className="flex flex-col gap-2.5">
@@ -389,12 +390,13 @@ export default function InvestimentoPage() {
                 Condições do atendimento clínico
               </p>
               <p className="text-sm text-white/70 leading-relaxed">
-                As sessões com o estudante ocorrem exclusivamente no Espaço
-                ESFERA. Cancelamentos ou remarcações devem ser solicitados com
-                antecedência mínima de 24 horas. O Parecer Técnico escrito não
-                substitui laudo médico (CID).{" "}
+                As sessões ocorrem no Espaço ESFERA, em domicílio ou on-line,
+                com possibilidade de visita escolar autorizada. Cancelamentos ou
+                remarcações devem ser solicitados com antecedência mínima de 24
+                horas. O Parecer Técnico escrito não substitui laudo médico
+                (CID).{" "}
                 <a
-                  href="/psicopedagogia"
+                  href="/psicopedagogia-neuropsicopedagogia"
                   className="text-white underline hover:text-white/80"
                 >
                   Saiba mais sobre as etapas clínicas →
